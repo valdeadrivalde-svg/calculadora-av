@@ -3,72 +3,584 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora AV Pro</title>
+  <title>Calculadora AV Pro & Engineering Tools</title>
   <style>
-    :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --danger: #ef4444; --text: #f8fafc; }
-    * { box-sizing: border-box; font-family: system-ui, sans-serif; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); padding: 16px; padding-bottom: 110px; }
-    h1 { font-size: 1.4rem; text-align: center; color: var(--accent); margin-bottom: 16px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-    .card { background: var(--card); border-radius: 10px; padding: 10px; text-align: center; border: 1px solid #334155; }
-    .icon { font-size: 1.8rem; }
-    .title { font-size: 0.8rem; font-weight: bold; margin: 4px 0; }
-    .watts { font-size: 0.7rem; color: #94a3b8; margin-bottom: 8px; }
-    .controls { display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn { background: #334155; color: white; border: none; border-radius: 6px; width: 30px; height: 30px; font-weight: bold; font-size: 1rem; }
-    .summary { position: fixed; bottom: 0; left: 0; right: 0; background: #090d16; border-top: 2px solid var(--accent); padding: 14px; }
-    .row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px; }
-    .val { font-weight: bold; color: var(--accent); }
-    .alert { background: #064e3b; color: #6ee7b7; padding: 8px; border-radius: 6px; font-size: 0.75rem; text-align: center; margin-top: 6px; }
-    .warn { background: #451a03; color: #fdba74; }
-    .danger { background: #450a0a; color: #fca5a5; }
+    :root {
+      --bg-dark: #121824;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --accent-blue: #38bdf8;
+      --accent-green: #22c55e;
+      --accent-orange: #f97316;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); padding-bottom: 60px; }
+
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 { font-size: 1.4rem; color: var(--accent-blue); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    header p { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* NAVEGACIÓN PESTAÑAS */
+    .tabs-nav {
+      display: flex;
+      background: #0f172a;
+      border-bottom: 1px solid var(--card-border);
+      overflow-x: auto;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 1rem; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* FORMULARIOS Y BUSCADOR */
+    .search-box {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: #0f172a;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+    .search-box:focus { border-color: var(--accent-blue); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    .input-group { margin-bottom: 1rem; }
+    .input-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600; }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: #0f172a;
+      color: var(--text-main);
+      font-size: 0.95rem;
+    }
+
+    /* LISTA EQUIPOS */
+    .equip-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
+    .equip-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .equip-info { flex: 1; }
+    .equip-name { font-weight: 500; font-size: 0.95rem; }
+    .equip-cat { font-size: 0.75rem; color: var(--text-muted); }
+    .equip-power { font-size: 0.85rem; color: var(--accent-orange); font-weight: 600; margin-top: 2px; }
+
+    .counter-controls { display: flex; align-items: center; gap: 8px; }
+    .btn-qty {
+      width: 32px; height: 32px;
+      border-radius: 6px; border: none;
+      background: var(--card-border);
+      color: var(--text-main);
+      font-weight: bold; font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .btn-qty:active { background: var(--accent-blue); }
+    .qty-display { min-width: 24px; text-align: center; font-weight: bold; }
+
+    /* INDICADORES Y METRICAS */
+    .metric-box {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid var(--card-border);
+    }
+    .metric-value { font-size: 1.4rem; font-weight: bold; color: var(--accent-green); margin-top: 4px; }
+    .metric-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+
+    .badge-phase {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .bg-l1 { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+    .bg-l2 { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; }
+    .bg-l3 { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent-blue);
+      color: #0f172a;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
-  <h1>⚡ Calculadora AV Pro</h1>
-  <div class="grid" id="grid"></div>
-  <div class="summary">
-    <div class="row"><span>Consumo Total:</span><span class="val" id="w">0 W</span></div>
-    <div class="row"><span>Amperios (230V):</span><span class="val" id="a">0.0 A</span></div>
-    <div id="st" class="alert">✅ Selecciona equipos para calcular.</div>
-  </div>
-  <script>
-    const CAT = [
-      { id: 'led', name: 'Panel LED 50x50', w: 150, i: '🖥️' },
-      { id: 'tv', name: 'TV 60"', w: 180, i: '📺' },
-      { id: 'bm', name: 'Control Blackmagic', w: 450, i: '🎛️' },
-      { id: 'foco', name: 'Foco LED 600W', w: 650, i: '💡' },
-      { id: 'sub', name: 'Subwoofer PA', w: 800, i: '🔊' },
-      { id: 'pc', name: 'Portátil / Control', w: 90, i: '💻' }
-    ];
-    let st = {}; CAT.forEach(x => st[x.id] = 0);
-    function draw() {
-      document.getElementById('grid').innerHTML = CAT.map(x => `
-        <div class="card">
-          <div class="icon">${x.i}</div>
-          <div class="title">${x.name}</div>
-          <div class="watts">${x.w} W</div>
-          <div class="controls">
-            <button class="btn" onclick="add('${x.id}',-1)">-</button>
-            <span>${st[x.id]}</span>
-            <button class="btn" onclick="add('${x.id}',1)">+</button>
+
+  <header>
+    <h1>⚡ AUDIOVISUAL ENGINE PRO</h1>
+    <p>Calculadora de Potencias, Pantallas LED y Ópticas</p>
+  </header>
+
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="openTab('tab-elec')">⚡ Corriente</button>
+    <button class="tab-btn" onclick="openTab('tab-led')">🖥️ Pantalla LED</button>
+    <button class="tab-btn" onclick="openTab('tab-proj')">📹 Proyección</button>
+    <button class="tab-btn" onclick="openTab('tab-summary')">📄 Resumen</button>
+  </nav>
+
+  <div class="container">
+
+    <!-- PESTAÑA 1: ELÉCTRICA Y CONSUMOS -->
+    <div id="tab-elec" class="tab-content active">
+      <div class="card">
+        <div class="card-title">Resumen de Consumo General</div>
+        <div class="grid-3">
+          <div class="metric-box">
+            <div class="metric-label">Potencia Total</div>
+            <div class="metric-value" id="total-watts">0 W</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Corriente Total (230V)</div>
+            <div class="metric-value" id="total-amps" style="color: var(--accent-orange)">0.0 A</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Acometida Recomendada</div>
+            <div class="metric-value" id="rec-feed" style="font-size: 0.95rem; color: var(--accent-purple)">Schuko 16A</div>
           </div>
         </div>
-      `).join('');
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribución por Fases (Cuadro Trifásico)</div>
+        <div class="grid-3">
+          <div class="metric-box bg-l1">
+            <div class="metric-label">FASE L1</div>
+            <div class="metric-value" id="p-l1" style="color:#ef4444">0 W / 0 A</div>
+          </div>
+          <div class="metric-box bg-l2">
+            <div class="metric-label">FASE L2</div>
+            <div class="metric-value" id="p-l2" style="color:#eab308">0 W / 0 A</div>
+          </div>
+          <div class="metric-box bg-l3">
+            <div class="metric-label">FASE L3</div>
+            <div class="metric-value" id="p-l3" style="color:#3b82f6">0 W / 0 A</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>Catálogo de Equipos</span>
+          <button onclick="toggleCustomModal()" style="background:none; border:none; color:var(--accent-blue); cursor:pointer; font-size:0.85rem;">+ Añadir Personalizado</button>
+        </div>
+        <input type="text" id="search-equip" class="search-box" placeholder="🔍 Buscar por nombre o marca (ej. Yamaha, Sony, Blackmagic)..." oninput="renderEquipList()">
+        <div class="equip-list" id="equip-container"></div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 2: PANTALLAS LED -->
+    <div id="tab-led" class="tab-content">
+      <div class="card">
+        <div class="card-title">Dimensiones y Módulos LED</div>
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Ancho Pantalla (Metros)</label>
+            <input type="number" id="led-w" value="6" step="0.5" oninput="calcLED()">
+          </div>
+          <div class="input-group">
+            <label>Alto Pantalla (Metros)</label>
+            <input type="number" id="led-h" value="3.5" step="0.5" oninput="calcLED()">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Tamaño de Módulo / Cabinet</label>
+            <select id="led-cab-size" onchange="calcLED()">
+              <option value="50x50">50 x 50 cm</option>
+              <option value="100x50">100 x 50 cm</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Pixel Pitch (mm)</label>
+            <select id="led-pitch" onchange="calcLED()">
+              <option value="1.9">P1.9 mm</option>
+              <option value="2.6" selected>P2.6 mm</option>
+              <option value="2.9">P2.9 mm</option>
+              <option value="3.9">P3.9 mm</option>
+              <option value="4.8">P4.8 mm</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Resultados Técnicos Pantalla LED</div>
+        <div class="grid-2" style="margin-bottom:10px;">
+          <div class="metric-box">
+            <div class="metric-label">Resolución Total</div>
+            <div class="metric-value" id="led-res">0 x 0 px</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Aspect Ratio</div>
+            <div class="metric-value" id="led-ratio" style="color:var(--accent-purple)">16:9</div>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="metric-box">
+            <div class="metric-label">Nº Módulos Totales</div>
+            <div class="metric-value" id="led-cabinets">0</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Consumo Máximo</div>
+            <div class="metric-value" id="led-max-w" style="color:var(--accent-orange)">0 W</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Puertos Novastar (Gigabit)</div>
+            <div class="metric-value" id="led-ports" style="color:var(--accent-blue)">0 Puertos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 3: PROYECCIÓN -->
+    <div id="tab-proj" class="tab-content">
+      <div class="card">
+        <div class="card-title">Cálculo de Ópticas y Distancia</div>
+        <div class="input-group">
+          <label>Ancho de Pantalla a Llenar (Metros)</label>
+          <input type="number" id="proj-screen-w" value="5.0" step="0.1" oninput="calcProj()">
+        </div>
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Distancia Proyector → Pantalla (m)</label>
+            <input type="number" id="proj-dist" value="7.5" step="0.1" oninput="calcProj()">
+          </div>
+          <div class="input-group">
+            <label>Factor Lente / Throw Ratio (Si la tienes)</label>
+            <input type="number" id="proj-lens-ratio" value="1.5" step="0.01" placeholder="Ej. 1.2 - 1.8" oninput="calcProjByLens()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Resultado de Proyección</div>
+        <div class="grid-2">
+          <div class="metric-box">
+            <div class="metric-label">Ratio Necesario (Throw Ratio)</div>
+            <div class="metric-value" id="res-lens-needed" style="color:var(--accent-blue)">1.50 : 1</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Distancia Recomendada con tu Lente</div>
+            <div class="metric-value" id="res-dist-needed" style="color:var(--accent-green)">7.50 m</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 4: RESUMEN / INFORME -->
+    <div id="tab-summary" class="tab-content">
+      <div class="card">
+        <div class="card-title">Informe Técnico para Evento</div>
+        <div id="summary-content" style="font-size:0.9rem; line-height:1.6; color:var(--text-muted)">
+          No hay equipos seleccionados aún.
+        </div>
+        <button class="btn-primary" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // BASE DE DATOS DE EQUIPOS CREADA A PARTIR DE TU EXCEL
+    const excelEquipments = [
+      { cat: "General", name: "TV PLASMA 65", w: 180 },
+      { cat: "General", name: "DISTRI SDI BLACK MAGIC", w: 240 },
+      { cat: "General", name: "ATEN 3G SDI - HDMI", w: 240 },
+      { cat: "General", name: "PC ASUS", w: 240 },
+      { cat: "General", name: "Data video DAC 70", w: 240 },
+      { cat: "General", name: "Conversor fibra Blackmagic", w: 240 },
+      { cat: "General", name: "Conversor Sdi-hdmi blackmagic", w: 240 },
+      { cat: "General", name: "Asus vivabook", w: 240 },
+      { cat: "General", name: "Mac Alimentador 96w usb-c", w: 240 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic URSA Mini Pro", w: 150 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic URSA G2", w: 250 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Pocket Cinema 6K", w: 120 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Pocket Cinema 4K", w: 100 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Micro Studio 4K", w: 45 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic ATEM Mini", w: 25 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic Teranex 12G", w: 50 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic Mini Converter SDI/HDMI", w: 15 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic Micro Converter HDMI/SDI", w: 10 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic 12G SDI", w: 30 },
+      { cat: "Monitores AOC", name: "Monitor AOC 32\"", w: 48 },
+      { cat: "Monitores AOC", name: "Monitor AOC 32\" (4K)", w: 55 },
+      { cat: "Monitores AOC", name: "Monitor AOC 32\" Curvo", w: 50 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 32\"", w: 115 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 32\" Curvo", w: 55 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 40\"", w: 60 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 49\"", w: 75 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 55\"", w: 80 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 65\"", w: 95 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 32\"", w: 80 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 40\"", w: 100 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 43\"", w: 120 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 50\"", w: 150 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 55\"", w: 170 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 60\"", w: 180 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 65\"", w: 200 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 70\"", w: 220 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 80\"", w: 250 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 90\"", w: 300 },
+      { cat: "Equipos Audiovisuales", name: "E2 (Switching, Streaming)", w: 60 },
+      { cat: "Equipos Audiovisuales", name: "D3 (Switching, Control)", w: 75 },
+      { cat: "Receptores y Decodificadores", name: "Receptor Blackmagic DeckLink Studio 4K", w: 30 },
+      { cat: "Receptores y Decodificadores", name: "Receptor Blackmagic DeckLink 8K Pro", w: 45 },
+      { cat: "Receptores y Decodificadores", name: "Receptor Blackmagic Video Assist 4K", w: 15 },
+      { cat: "Audio/Video", name: "Audio de consola Yamaha QL5", w: 200 },
+      { cat: "Audio/Video", name: "Audio de consola Yamaha TF5", w: 250 },
+      { cat: "Audio/Video", name: "Audio de consola Behringer X32", w: 150 },
+      { cat: "Audio/Video", name: "Audio de consola Allen & Heath SQ5", w: 175 },
+      { cat: "Audio/Video", name: "Receptor de audio inalámbrico Shure BLX", w: 12 },
+      { cat: "Otros Equipos", name: "Proyector Epson 3500 lumens", w: 200 },
+      { cat: "Otros Equipos", name: "Proyector Epson 5000 lumens", w: 250 },
+      { cat: "Otros Equipos", name: "Proyector BenQ 3000 lumens", w: 200 },
+      { cat: "Otros Equipos", name: "Proyector BenQ 5000 lumens", w: 300 },
+      { cat: "Otros Equipos", name: "Proyector ViewSonic 3500 lumens", w: 180 },
+      { cat: "Otros Equipos", name: "Proyector ViewSonic 5000 lumens", w: 250 },
+      { cat: "Equipos de Grabación", name: "Grabador de vídeo Blackmagic HyperDeck Studio", w: 40 },
+      { cat: "Equipos de Grabación", name: "Grabador de vídeo Blackmagic HyperDeck Mini", w: 30 },
+      { cat: "Monitor de campo", name: "Monitor de campo 7\"", w: 20 },
+      { cat: "Monitor de campo", name: "Monitor de campo 5\"", w: 15 },
+      { cat: "Cámaras adicionales", name: "Cámara Sony FX6", w: 180 },
+      { cat: "Cámaras adicionales", name: "Cámara Sony FX9", w: 200 },
+      { cat: "Cámaras adicionales", name: "Cámara Sony A7S III", w: 120 },
+      { cat: "Cámaras adicionales", name: "Cámara Canon EOS C300 Mark III", w: 250 },
+      { cat: "Cámaras adicionales", name: "Cámara Canon EOS C500 Mark II", w: 300 },
+      { cat: "Cámaras adicionales", name: "Cámara Red Komodo 6K", w: 200 },
+      { cat: "Cámaras adicionales", name: "Cámara ARRI Alexa LF", w: 350 },
+      { cat: "Sistemas de Enlace y Transmisión", name: "Sistema de video inalámbrico Teradek Bolt 4K", w: 30 },
+      { cat: "Sistemas de Enlace y Transmisión", name: "Sistema de video inalámbrico Hollyland Mars", w: 25 },
+      { cat: "Receptores de señal y convertidores", name: "Receptor de señal Teradek RT", w: 20 },
+      { cat: "Receptores de señal y convertidores", name: "Convertidor de señales SDI a HDMI", w: 15 },
+      { cat: "Consolas de Control", name: "Consola de control Blackmagic ATEM Mini Pro", w: 35 },
+      { cat: "Consolas de Control", name: "Consola de control Blackmagic ATEM 2 M/E", w: 50 }
+    ];
+
+    let selectedQty = {};
+
+    function openTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+      if(tabId === 'tab-summary') renderSummary();
     }
-    function add(id, d) { st[id] = Math.max(0, st[id] + d); draw(); calc(); }
-    function calc() {
-      let tw = 0; CAT.forEach(x => tw += st[x.id] * x.w);
-      let ta = (tw / 230).toFixed(1);
-      document.getElementById('w').innerText = tw + ' W';
-      document.getElementById('a').innerText = ta + ' A';
-      let box = document.getElementById('st');
-      if (tw === 0) { box.className = 'alert'; box.innerText = '✅ Selecciona equipos para calcular.'; }
-      else if (tw <= 3500) { box.className = 'alert'; box.innerText = '✅ Aguanta en una sola regleta (16A / Schuko).'; }
-      else if (tw <= 7000) { box.className = 'alert warn'; box.innerText = '⚠ Repartir en 2 regletas independientes (o Cetac 32A).'; }
-      else { box.className = 'alert danger'; box.innerText = '🚨 Requiere Cuadro Trifásico con reparto de fases.'; }
+
+    function renderEquipList() {
+      const query = document.getElementById('search-equip').value.toLowerCase();
+      const container = document.getElementById('equip-container');
+      container.innerHTML = '';
+
+      excelEquipments.forEach((item, idx) => {
+        if(item.name.toLowerCase().includes(query) || item.cat.toLowerCase().includes(query)) {
+          const qty = selectedQty[idx] || 0;
+          const div = document.createElement('div');
+          div.className = 'equip-item';
+          div.innerHTML = `
+            <div class="equip-info">
+              <div class="equip-name">${item.name}</div>
+              <div class="equip-cat">${item.cat}</div>
+              <div class="equip-power">${item.w} W / ${(item.w / 230).toFixed(2)} A</div>
+            </div>
+            <div class="counter-controls">
+              <button class="btn-qty" onclick="updateQty(${idx}, -1)">-</button>
+              <span class="qty-display">${qty}</span>
+              <button class="btn-qty" onclick="updateQty(${idx}, 1)">+</button>
+            </div>
+          `;
+          container.appendChild(div);
+        }
+      });
     }
-    draw();
+
+    function updateQty(idx, change) {
+      const current = selectedQty[idx] || 0;
+      const updated = Math.max(0, current + change);
+      if(updated === 0) delete selectedQty[idx];
+      else selectedQty[idx] = updated;
+      renderEquipList();
+      recalcPower();
+    }
+
+    function recalcPower() {
+      let totalW = 0;
+      for (const [idx, qty] of Object.entries(selectedQty)) {
+        totalW += excelEquipments[idx].w * qty;
+      }
+      
+      const totalA = totalW / 230;
+      document.getElementById('total-watts').innerText = `${totalW} W`;
+      document.getElementById('total-amps').innerText = `${totalA.toFixed(1)} A`;
+
+      // Recomendación Acometida
+      let feedText = "Schuko 16A (Monofásico)";
+      if(totalA > 64) feedText = "Cetac 64A Trifásico";
+      else if(totalA > 32) feedText = "Cetac 32A Trifásico / 64A Mono";
+      else if(totalA > 16) feedText = "Cetac 32A Monofásico";
+      document.getElementById('rec-feed').innerText = feedText;
+
+      // Balance Fases
+      const p1 = Math.round(totalW / 3);
+      const p2 = Math.round(totalW / 3);
+      const p3 = totalW - p1 - p2;
+      document.getElementById('p-l1').innerText = `${p1} W / ${(p1/230).toFixed(1)} A`;
+      document.getElementById('p-l2').innerText = `${p2} W / ${(p2/230).toFixed(1)} A`;
+      document.getElementById('p-l3').innerText = `${p3} W / ${(p3/230).toFixed(1)} A`;
+    }
+
+    // CALCULADORA LED
+    function calcLED() {
+      const w = parseFloat(document.getElementById('led-w').value) || 0;
+      const h = parseFloat(document.getElementById('led-h').value) || 0;
+      const cabType = document.getElementById('led-cab-size').value;
+      const pitch = parseFloat(document.getElementById('led-pitch').value);
+
+      const cabW = cabType === '100x50' ? 1.0 : 0.5;
+      const cabH = 0.5;
+
+      const numCols = Math.ceil(w / cabW);
+      const numRows = Math.ceil(h / cabH);
+      const totalCabs = numCols * numRows;
+
+      const pxPerCabW = Math.round((cabW * 1000) / pitch);
+      const pxPerCabH = Math.round((cabH * 1000) / pitch);
+
+      const resW = numCols * pxPerCabW;
+      const resH = numRows * pxPerCabH;
+      const totalPixels = resW * resH;
+
+      document.getElementById('led-res').innerText = `${resW} x ${resH} px`;
+      document.getElementById('led-cabinets').innerText = `${totalCabs} cabs (${numCols}x${numRows})`;
+
+      // Aspect Ratio
+      const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+      const div = gcd(resW, resH);
+      document.getElementById('led-ratio').innerText = `${Math.round(resW/div)}:${Math.round(resH/div)}`;
+
+      // Consumo (estimado 120W max por cabinet 50x50)
+      const maxW = totalCabs * (cabType === '100x50' ? 240 : 120);
+      document.getElementById('led-max-w').innerText = `${maxW} W / ${(maxW/230).toFixed(1)} A`;
+
+      // Puertos Novastar (Capacidad ~650.000 px por puerto 1Gbps)
+      const portsNeeded = Math.ceil(totalPixels / 650000);
+      document.getElementById('led-ports').innerText = `${portsNeeded} Puerto(s) Novastar`;
+    }
+
+    // CALCULADORA PROYECCIÓN
+    function calcProj() {
+      const screenW = parseFloat(document.getElementById('proj-screen-w').value) || 1;
+      const dist = parseFloat(document.getElementById('proj-dist').value) || 0;
+      const ratioNeeded = dist / screenW;
+      document.getElementById('res-lens-needed').innerText = `${ratioNeeded.toFixed(2)} : 1`;
+    }
+
+    function calcProjByLens() {
+      const screenW = parseFloat(document.getElementById('proj-screen-w').value) || 1;
+      const lens = parseFloat(document.getElementById('proj-lens-ratio').value) || 0;
+      const distNeeded = screenW * lens;
+      document.getElementById('res-dist-needed').innerText = `${distNeeded.toFixed(2)} m`;
+    }
+
+    // INFORME RESUMEN
+    function renderSummary() {
+      const container = document.getElementById('summary-content');
+      let html = `<h3 style="color:var(--text-main); margin-bottom:10px;">Desglose de Equipamiento Seleccionado</h3><ul>`;
+      let count = 0;
+
+      for (const [idx, qty] of Object.entries(selectedQty)) {
+        const item = excelEquipments[idx];
+        html += `<li><strong>${qty}x</strong> ${item.name} (${item.w * qty} W)</li>`;
+        count++;
+      }
+
+      if(count === 0) {
+        container.innerHTML = `<p>No has seleccionado ningún equipo del catálogo.</p>`;
+        return;
+      }
+
+      html += `</ul><br><hr style="border-color:var(--card-border);"><br>`;
+      html += `<p><strong>Potencia Total Requerida:</strong> ${document.getElementById('total-watts').innerText}</p>`;
+      html += `<p><strong>Amperaje Total (230V):</strong> ${document.getElementById('total-amps').innerText}</p>`;
+      html += `<p><strong>Acometida Recomendada:</strong> ${document.getElementById('rec-feed').innerText}</p>`;
+
+      container.innerHTML = html;
+    }
+
+    // INICIALIZACIÓN
+    renderEquipList();
+    calcLED();
+    calcProj();
   </script>
 </body>
 </html>
