@@ -6,12 +6,13 @@
   <title>Calculadora AV Pro & Engineering Tools</title>
   <style>
     :root {
-      --bg-dark: #121824;
+      --bg-dark: #0f172a;
       --card-bg: #1e293b;
       --card-border: #334155;
       --accent-blue: #38bdf8;
       --accent-green: #22c55e;
       --accent-orange: #f97316;
+      --accent-red: #ef4444;
       --accent-purple: #a855f7;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -22,27 +23,27 @@
 
     header {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      padding: 1.5rem 1rem;
+      padding: 1.2rem 1rem;
       text-align: center;
       border-bottom: 1px solid var(--card-border);
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    header h1 { font-size: 1.4rem; color: var(--accent-blue); display: flex; align-items: center; justify-content: center; gap: 8px; }
-    header p { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+    header h1 { font-size: 1.3rem; color: var(--accent-blue); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
 
-    /* NAVEGACIÓN PESTAÑAS */
+    /* NAV PESTAÑAS */
     .tabs-nav {
       display: flex;
-      background: #0f172a;
+      background: #090d16;
       border-bottom: 1px solid var(--card-border);
       overflow-x: auto;
     }
     .tab-btn {
       flex: 1;
-      min-width: 120px;
-      padding: 12px 10px;
+      min-width: 110px;
+      padding: 12px 8px;
       background: none;
       border: none;
       color: var(--text-muted);
@@ -59,7 +60,7 @@
     .tab-btn.active {
       color: var(--accent-blue);
       border-bottom-color: var(--accent-blue);
-      background: rgba(56, 189, 248, 0.05);
+      background: rgba(56, 189, 248, 0.08);
     }
 
     .container { max-width: 900px; margin: 0 auto; padding: 1rem; }
@@ -75,10 +76,10 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     }
     .card-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--accent-blue);
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -87,13 +88,13 @@
     /* FORMULARIOS Y BUSCADOR */
     .search-box {
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 8px;
       border: 1px solid var(--card-border);
-      background: #0f172a;
+      background: #090d16;
       color: var(--text-main);
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
       outline: none;
     }
     .search-box:focus { border-color: var(--accent-blue); }
@@ -102,139 +103,182 @@
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
     @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
-    .input-group { margin-bottom: 1rem; }
-    .input-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600; }
+    .input-group { margin-bottom: 0.8rem; }
+    .input-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600; }
     .input-group input, .input-group select {
       width: 100%;
       padding: 10px;
       border-radius: 6px;
       border: 1px solid var(--card-border);
-      background: #0f172a;
+      background: #090d16;
       color: var(--text-main);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
+    /* ZONAS Y BOLO */
+    .zone-box {
+      background: #131d2e;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .zone-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 6px;
+    }
+    .zone-title { font-weight: bold; color: var(--accent-green); font-size: 1rem; }
+
+    /* ALERTAS */
+    .alert-banner {
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alert-danger { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: #fca5a5; }
+    .alert-success { background: rgba(34, 197, 94, 0.15); border: 1px solid var(--accent-green); color: #86efac; }
+    .alert-warning { background: rgba(249, 115, 22, 0.15); border: 1px solid var(--accent-orange); color: #fdba74; }
+
     /* LISTA EQUIPOS */
-    .equip-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
+    .equip-list { max-height: 320px; overflow-y: auto; padding-right: 4px; }
     .equip-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px;
+      padding: 8px 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
     .equip-info { flex: 1; }
-    .equip-name { font-weight: 500; font-size: 0.95rem; }
-    .equip-cat { font-size: 0.75rem; color: var(--text-muted); }
-    .equip-power { font-size: 0.85rem; color: var(--accent-orange); font-weight: 600; margin-top: 2px; }
+    .equip-name { font-weight: 500; font-size: 0.9rem; }
+    .equip-cat { font-size: 0.72rem; color: var(--text-muted); }
+    .equip-power { font-size: 0.8rem; color: var(--accent-orange); font-weight: 600; }
 
-    .counter-controls { display: flex; align-items: center; gap: 8px; }
+    .counter-controls { display: flex; align-items: center; gap: 6px; }
     .btn-qty {
-      width: 32px; height: 32px;
+      width: 28px; height: 28px;
       border-radius: 6px; border: none;
       background: var(--card-border);
       color: var(--text-main);
-      font-weight: bold; font-size: 1.1rem;
+      font-weight: bold; font-size: 1rem;
       cursor: pointer;
     }
     .btn-qty:active { background: var(--accent-blue); }
-    .qty-display { min-width: 24px; text-align: center; font-weight: bold; }
+    .qty-display { min-width: 20px; text-align: center; font-weight: bold; font-size: 0.9rem; }
 
-    /* INDICADORES Y METRICAS */
+    /* INDICADORES */
     .metric-box {
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(9, 13, 22, 0.6);
       border-radius: 8px;
-      padding: 12px;
+      padding: 10px;
       text-align: center;
       border: 1px solid var(--card-border);
     }
-    .metric-value { font-size: 1.4rem; font-weight: bold; color: var(--accent-green); margin-top: 4px; }
-    .metric-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-
-    .badge-phase {
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: bold;
-    }
-    .bg-l1 { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
-    .bg-l2 { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; }
-    .bg-l3 { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; }
+    .metric-value { font-size: 1.25rem; font-weight: bold; color: var(--accent-green); margin-top: 2px; }
+    .metric-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
 
     .btn-primary {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
       border: none;
       background: var(--accent-blue);
       color: #0f172a;
       font-weight: bold;
       cursor: pointer;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       margin-top: 8px;
+    }
+    .btn-small {
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      background: var(--card-border);
+      color: var(--text-main);
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>⚡ AUDIOVISUAL ENGINE PRO</h1>
-    <p>Calculadora de Potencias, Pantallas LED y Ópticas</p>
+    <h1>⚡ AV ENGINE PRO - PROJECT MANAGER</h1>
+    <p>Gestor de Potencia por Zonas, Pantallas LED y Ópticas</p>
   </header>
 
   <nav class="tabs-nav">
-    <button class="tab-btn active" onclick="openTab('tab-elec')">⚡ Corriente</button>
+    <button class="tab-btn active" onclick="openTab('tab-elec')">⚡ Zonas & Cuadro</button>
     <button class="tab-btn" onclick="openTab('tab-led')">🖥️ Pantalla LED</button>
     <button class="tab-btn" onclick="openTab('tab-proj')">📹 Proyección</button>
-    <button class="tab-btn" onclick="openTab('tab-summary')">📄 Resumen</button>
+    <button class="tab-btn" onclick="openTab('tab-summary')">📄 Resumen Bolo</button>
   </nav>
 
   <div class="container">
 
-    <!-- PESTAÑA 1: ELÉCTRICA Y CONSUMOS -->
+    <!-- PESTAÑA 1: ELÉCTRICA Y ZONAS DEL BOLO -->
     <div id="tab-elec" class="tab-content active">
       <div class="card">
-        <div class="card-title">Resumen de Consumo General</div>
+        <div class="card-title">Acometida Eléctrica Disponible en Recinto</div>
+        <div class="input-group">
+          <label>Selecciona qué salida te proporciona la Producción:</label>
+          <select id="feed-type" onchange="recalcProject()">
+            <option value="1_schuko">1x Schuko Monofásico (16A / 3.680W max)</option>
+            <option value="2_schuko" selected>2x Schuko Monofásicos Separados (32A / 7.360W total)</option>
+            <option value="cetac_16_mono">1x Cetac Monofásico 16A (3.680W)</option>
+            <option value="cetac_32_mono">1x Cetac Monofásico 32A (7.360W)</option>
+            <option value="cetac_32_tri">1x Cetac Trifásico 32A (22.000W)</option>
+            <option value="cetac_64_tri">1x Cetac Trifásico 64A (44.000W)</option>
+          </select>
+        </div>
+
         <div class="grid-3">
           <div class="metric-box">
-            <div class="metric-label">Potencia Total</div>
+            <div class="metric-label">Consumo Total Bolo</div>
             <div class="metric-value" id="total-watts">0 W</div>
           </div>
           <div class="metric-box">
-            <div class="metric-label">Corriente Total (230V)</div>
+            <div class="metric-label">Amperaje Total (230V)</div>
             <div class="metric-value" id="total-amps" style="color: var(--accent-orange)">0.0 A</div>
           </div>
           <div class="metric-box">
-            <div class="metric-label">Acometida Recomendada</div>
-            <div class="metric-value" id="rec-feed" style="font-size: 0.95rem; color: var(--accent-purple)">Schuko 16A</div>
+            <div class="metric-label">Líneas Regleta (<2.300W)</div>
+            <div class="metric-value" id="total-lines" style="color: var(--accent-purple)">0 Líneas</div>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-title">Distribución por Fases (Cuadro Trifásico)</div>
-        <div class="grid-3">
-          <div class="metric-box bg-l1">
-            <div class="metric-label">FASE L1</div>
-            <div class="metric-value" id="p-l1" style="color:#ef4444">0 W / 0 A</div>
-          </div>
-          <div class="metric-box bg-l2">
-            <div class="metric-label">FASE L2</div>
-            <div class="metric-value" id="p-l2" style="color:#eab308">0 W / 0 A</div>
-          </div>
-          <div class="metric-box bg-l3">
-            <div class="metric-label">FASE L3</div>
-            <div class="metric-value" id="p-l3" style="color:#3b82f6">0 W / 0 A</div>
-          </div>
+        <div id="alert-box-feed" class="alert-banner alert-success">
+          ✅ Acometida suficiente para la carga actual del evento.
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">
-          <span>Catálogo de Equipos</span>
-          <button onclick="toggleCustomModal()" style="background:none; border:none; color:var(--accent-blue); cursor:pointer; font-size:0.85rem;">+ Añadir Personalizado</button>
+          <span>Configuración de Zonas del Evento</span>
+          <button class="btn-small" onclick="addZone()">+ Crear Nueva Zona</button>
         </div>
-        <input type="text" id="search-equip" class="search-box" placeholder="🔍 Buscar por nombre o marca (ej. Yamaha, Sony, Blackmagic)..." oninput="renderEquipList()">
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">
+          Añade zonas (ej. <i>Control Vídeo, Escenario / Bolo, Rack Conversores</i>) y asigna equipos a cada una.
+        </p>
+
+        <div id="zones-container"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Añadir Equipos a Zonas</div>
+        <div class="input-group">
+          <label>Selecciona Zona de Destino:</label>
+          <select id="select-active-zone" onchange="renderEquipList()"></select>
+        </div>
+        <input type="text" id="search-equip" class="search-box" placeholder="🔍 Buscar equipo (ej. Yamaha, Sony, Blackmagic, Monitor AOC)..." oninput="renderEquipList()">
         <div class="equip-list" id="equip-container"></div>
       </div>
     </div>
@@ -275,7 +319,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Resultados Técnicos Pantalla LED</div>
+        <div class="card-title">Resultados Técnicos LED</div>
         <div class="grid-2" style="margin-bottom:10px;">
           <div class="metric-box">
             <div class="metric-label">Resolución Total</div>
@@ -338,21 +382,21 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 4: RESUMEN / INFORME -->
+    <!-- PESTAÑA 4: RESUMEN BOLO -->
     <div id="tab-summary" class="tab-content">
       <div class="card">
-        <div class="card-title">Informe Técnico para Evento</div>
-        <div id="summary-content" style="font-size:0.9rem; line-height:1.6; color:var(--text-muted)">
-          No hay equipos seleccionados aún.
+        <div class="card-title">Informe Técnico de Distribución</div>
+        <div id="summary-content" style="font-size:0.88rem; line-height:1.6; color:var(--text-muted)">
+          No hay zonas ni equipos configurados.
         </div>
-        <button class="btn-primary" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
+        <button class="btn-primary" onclick="window.print()">🖨️ Imprimir / Guardar PDF para Eléctrico</button>
       </div>
     </div>
 
   </div>
 
   <script>
-    // BASE DE DATOS DE EQUIPOS CREADA A PARTIR DE TU EXCEL
+    // BASE DE DATOS DE EQUIPOS EXTRAÍDOS DE TU EXCEL CORRIENTE.xlsx
     const excelEquipments = [
       { cat: "General", name: "TV PLASMA 65", w: 180 },
       { cat: "General", name: "DISTRI SDI BLACK MAGIC", w: 240 },
@@ -427,7 +471,12 @@
       { cat: "Consolas de Control", name: "Consola de control Blackmagic ATEM 2 M/E", w: 50 }
     ];
 
-    let selectedQty = {};
+    // ESTRUCTURA DE ZONAS
+    let zones = [
+      { id: 1, name: "Zona 1: Control Principal", items: {} },
+      { id: 2, name: "Zona 2: Escenario / Bolo", items: {} }
+    ];
+    let activeZoneId = 1;
 
     function openTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -437,14 +486,93 @@
       if(tabId === 'tab-summary') renderSummary();
     }
 
+    function addZone() {
+      const zName = prompt("Nombre de la nueva zona (ej. Zona 3: Acometida LED):", `Zona ${zones.length + 1}`);
+      if(zName) {
+        const newId = Date.now();
+        zones.push({ id: newId, name: zName, items: {} });
+        activeZoneId = newId;
+        renderZones();
+        renderActiveZoneSelect();
+        renderEquipList();
+        recalcProject();
+      }
+    }
+
+    function deleteZone(zId) {
+      if(zones.length <= 1) {
+        alert("Debes mantener al menos una zona en el proyecto.");
+        return;
+      }
+      if(confirm("¿Seguro que quieres borrar esta zona y sus equipos?")) {
+        zones = zones.filter(z => z.id !== zId);
+        activeZoneId = zones[0].id;
+        renderZones();
+        renderActiveZoneSelect();
+        renderEquipList();
+        recalcProject();
+      }
+    }
+
+    function renderActiveZoneSelect() {
+      const sel = document.getElementById('select-active-zone');
+      sel.innerHTML = '';
+      zones.forEach(z => {
+        const opt = document.createElement('option');
+        opt.value = z.id;
+        opt.innerText = z.name;
+        if(z.id === activeZoneId) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderZones() {
+      const container = document.getElementById('zones-container');
+      container.innerHTML = '';
+
+      zones.forEach(z => {
+        let zWatts = 0;
+        let zItemsCount = 0;
+
+        for (const [eIdx, qty] of Object.entries(z.items)) {
+          zWatts += excelEquipments[eIdx].w * qty;
+          zItemsCount += qty;
+        }
+
+        const zAmps = zWatts / 230;
+        const zLines = Math.ceil(zWatts / 2300) || 1;
+
+        const box = document.createElement('div');
+        box.className = 'zone-box';
+        box.innerHTML = `
+          <div class="zone-header">
+            <span class="zone-title">${z.name}</span>
+            <div>
+              <button class="btn-small" style="background:#ef4444;" onclick="deleteZone(${z.id})">Borrar</button>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div style="font-size:0.85rem;"><strong>Equipos:</strong> ${zItemsCount} uds.</div>
+            <div style="font-size:0.85rem;"><strong>Consumo:</strong> ${zWatts} W (${zAmps.toFixed(1)} A)</div>
+            <div style="font-size:0.85rem; color:var(--accent-purple)"><strong>Mangueras:</strong> ${zLines} Regletas (<2.300W)</div>
+          </div>
+        `;
+        container.appendChild(box);
+      });
+    }
+
     function renderEquipList() {
+      const selZoneVal = parseInt(document.getElementById('select-active-zone').value);
+      if(selZoneVal) activeZoneId = selZoneVal;
+
+      const currentZone = zones.find(z => z.id === activeZoneId);
       const query = document.getElementById('search-equip').value.toLowerCase();
       const container = document.getElementById('equip-container');
       container.innerHTML = '';
 
       excelEquipments.forEach((item, idx) => {
         if(item.name.toLowerCase().includes(query) || item.cat.toLowerCase().includes(query)) {
-          const qty = selectedQty[idx] || 0;
+          const qty = currentZone.items[idx] || 0;
           const div = document.createElement('div');
           div.className = 'equip-item';
           div.innerHTML = `
@@ -464,39 +592,55 @@
       });
     }
 
-    function updateQty(idx, change) {
-      const current = selectedQty[idx] || 0;
-      const updated = Math.max(0, current + change);
-      if(updated === 0) delete selectedQty[idx];
-      else selectedQty[idx] = updated;
+    function updateQty(equipIdx, change) {
+      const currentZone = zones.find(z => z.id === activeZoneId);
+      const currQty = currentZone.items[equipIdx] || 0;
+      const newQty = Math.max(0, currQty + change);
+
+      if(newQty === 0) delete currentZone.items[equipIdx];
+      else currentZone.items[equipIdx] = newQty;
+
       renderEquipList();
-      recalcPower();
+      renderZones();
+      recalcProject();
     }
 
-    function recalcPower() {
+    function recalcProject() {
       let totalW = 0;
-      for (const [idx, qty] of Object.entries(selectedQty)) {
-        totalW += excelEquipments[idx].w * qty;
-      }
-      
+      let totalLines = 0;
+
+      zones.forEach(z => {
+        let zW = 0;
+        for (const [idx, qty] of Object.entries(z.items)) {
+          zW += excelEquipments[idx].w * qty;
+        }
+        totalW += zW;
+        totalLines += Math.ceil(zW / 2300);
+      });
+
       const totalA = totalW / 230;
       document.getElementById('total-watts').innerText = `${totalW} W`;
       document.getElementById('total-amps').innerText = `${totalA.toFixed(1)} A`;
+      document.getElementById('total-lines').innerText = `${totalLines} Líneas`;
 
-      // Recomendación Acometida
-      let feedText = "Schuko 16A (Monofásico)";
-      if(totalA > 64) feedText = "Cetac 64A Trifásico";
-      else if(totalA > 32) feedText = "Cetac 32A Trifásico / 64A Mono";
-      else if(totalA > 16) feedText = "Cetac 32A Monofásico";
-      document.getElementById('rec-feed').innerText = feedText;
+      // COMPROBACIÓN DE ACOMETIDA
+      const feedType = document.getElementById('feed-type').value;
+      let maxAllowedW = 3680;
 
-      // Balance Fases
-      const p1 = Math.round(totalW / 3);
-      const p2 = Math.round(totalW / 3);
-      const p3 = totalW - p1 - p2;
-      document.getElementById('p-l1').innerText = `${p1} W / ${(p1/230).toFixed(1)} A`;
-      document.getElementById('p-l2').innerText = `${p2} W / ${(p2/230).toFixed(1)} A`;
-      document.getElementById('p-l3').innerText = `${p3} W / ${(p3/230).toFixed(1)} A`;
+      if(feedType === '2_schuko') maxAllowedW = 7360;
+      if(feedType === 'cetac_32_mono') maxAllowedW = 7360;
+      if(feedType === 'cetac_32_tri') maxAllowedW = 22000;
+      if(feedType === 'cetac_64_tri') maxAllowedW = 44000;
+
+      const alertBox = document.getElementById('alert-box-feed');
+
+      if(totalW > maxAllowedW) {
+        alertBox.className = "alert-banner alert-danger";
+        alertBox.innerHTML = `⚠️ <strong>¡SOBRECARGA DETECTADA!</strong> Consumo total (${totalW}W) supera la capacidad del cuadro seleccionado (${maxAllowedW}W max). Solicita más líneas o un cuadro Cetac mayor.`;
+      } else {
+        alertBox.className = "alert-banner alert-success";
+        alertBox.innerHTML = `✅ <strong>Acometida Correcta:</strong> Consumo dentro del margen de seguridad del cuadro seleccionado (${totalW}W de ${maxAllowedW}W max).`;
+      }
     }
 
     // CALCULADORA LED
@@ -523,16 +667,13 @@
       document.getElementById('led-res').innerText = `${resW} x ${resH} px`;
       document.getElementById('led-cabinets').innerText = `${totalCabs} cabs (${numCols}x${numRows})`;
 
-      // Aspect Ratio
       const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
       const div = gcd(resW, resH);
       document.getElementById('led-ratio').innerText = `${Math.round(resW/div)}:${Math.round(resH/div)}`;
 
-      // Consumo (estimado 120W max por cabinet 50x50)
       const maxW = totalCabs * (cabType === '100x50' ? 240 : 120);
       document.getElementById('led-max-w').innerText = `${maxW} W / ${(maxW/230).toFixed(1)} A`;
 
-      // Puertos Novastar (Capacidad ~650.000 px por puerto 1Gbps)
       const portsNeeded = Math.ceil(totalPixels / 650000);
       document.getElementById('led-ports').innerText = `${portsNeeded} Puerto(s) Novastar`;
     }
@@ -552,35 +693,59 @@
       document.getElementById('res-dist-needed').innerText = `${distNeeded.toFixed(2)} m`;
     }
 
-    // INFORME RESUMEN
+    // RESUMEN DEL BOLO
     function renderSummary() {
       const container = document.getElementById('summary-content');
-      let html = `<h3 style="color:var(--text-main); margin-bottom:10px;">Desglose de Equipamiento Seleccionado</h3><ul>`;
-      let count = 0;
+      let html = `<h3 style="color:var(--text-main); margin-bottom:12px;">Desglose de Zonas y Mangueras Eléctricas</h3>`;
+      let globalEquips = 0;
 
-      for (const [idx, qty] of Object.entries(selectedQty)) {
-        const item = excelEquipments[idx];
-        html += `<li><strong>${qty}x</strong> ${item.name} (${item.w * qty} W)</li>`;
-        count++;
-      }
+      zones.forEach(z => {
+        let zW = 0;
+        let zItemsHTML = '<ul>';
+        let countInZone = 0;
 
-      if(count === 0) {
-        container.innerHTML = `<p>No has seleccionado ningún equipo del catálogo.</p>`;
+        for (const [idx, qty] of Object.entries(z.items)) {
+          const item = excelEquipments[idx];
+          zW += item.w * qty;
+          zItemsHTML += `<li><strong>${qty}x</strong> ${item.name} (${item.w * qty} W)</li>`;
+          countInZone += qty;
+          globalEquips += qty;
+        }
+        zItemsHTML += '</ul>';
+
+        const lines = Math.ceil(zW / 2300) || 1;
+
+        html += `
+          <div style="background:#131d2e; padding:10px; border-radius:6px; margin-bottom:10px; border:1px solid var(--card-border);">
+            <h4 style="color:var(--accent-green);">${z.name}</h4>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">
+              Consumo: <strong>${zW} W (${(zW/230).toFixed(1)} A)</strong> | Tiras de regleta recomendadas: <strong style="color:var(--accent-purple)">${lines} Manguera(s) independ.</strong>
+            </p>
+            ${countInZone > 0 ? zItemsHTML : '<p style="font-size:0.8rem; font-style:italic;">Sin equipos asignados.</p>'}
+          </div>
+        `;
+      });
+
+      if(globalEquips === 0) {
+        container.innerHTML = `<p>No has añadido equipos a ninguna zona del evento.</p>`;
         return;
       }
 
-      html += `</ul><br><hr style="border-color:var(--card-border);"><br>`;
-      html += `<p><strong>Potencia Total Requerida:</strong> ${document.getElementById('total-watts').innerText}</p>`;
-      html += `<p><strong>Amperaje Total (230V):</strong> ${document.getElementById('total-amps').innerText}</p>`;
-      html += `<p><strong>Acometida Recomendada:</strong> ${document.getElementById('rec-feed').innerText}</p>`;
+      html += `<br><hr style="border-color:var(--card-border);"><br>`;
+      html += `<p><strong>Potencia Total del Evento:</strong> ${document.getElementById('total-watts').innerText}</p>`;
+      html += `<p><strong>Amperaje Global (230V):</strong> ${document.getElementById('total-amps').innerText}</p>`;
+      html += `<p><strong>Acometida Seleccionada:</strong> ${document.getElementById('feed-type').options[document.getElementById('feed-type').selectedIndex].text}</p>`;
 
       container.innerHTML = html;
     }
 
-    // INICIALIZACIÓN
+    // INICIALIZAR
+    renderActiveZoneSelect();
+    renderZones();
     renderEquipList();
     calcLED();
     calcProj();
+    recalcProject();
   </script>
 </body>
 </html>
