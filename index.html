@@ -3,268 +3,294 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AV Engine Pro - Power & AV Calculator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>AV Engine Pro - Project & Power Manager</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #0b0f19;
-      color: #f3f4f6;
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --accent-blue: #38bdf8;
+      --accent-green: #22c55e;
+      --accent-orange: #f97316;
+      --accent-red: #ef4444;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
-    /* Custom Scrollbar for Equipment Lists */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); padding-bottom: 60px; }
+
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 1.2rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    ::-webkit-scrollbar-track {
-      background: #111827;
+    header h1 { font-size: 1.3rem; color: var(--accent-blue); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* NAV PESTAÑAS */
+    .tabs-nav {
+      display: flex;
+      background: #090d16;
+      border-bottom: 1px solid var(--card-border);
+      overflow-x: auto;
     }
-    ::-webkit-scrollbar-thumb {
-      background: #374151;
-      border-radius: 3px;
+    .tab-btn {
+      flex: 1;
+      min-width: 110px;
+      padding: 12px 8px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #4b5563;
+    .tab-btn.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.08);
     }
-    .custom-glass {
-      background: rgba(17, 24, 39, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+
+    .container { max-width: 900px; margin: 0 auto; padding: 1rem; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     }
-    @media print {
-      body {
-        background: white !important;
-        color: black !important;
-      }
-      .no-print {
-        display: none !important;
-      }
-      .print-only {
-        display: block !important;
-      }
-      .custom-glass {
-        border: 1px solid #ccc !important;
-        background: white !important;
-        color: black !important;
-        box-shadow: none !important;
-      }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-bottom: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* FORMULARIOS Y BUSCADOR */
+    .search-box {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: #090d16;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+      outline: none;
+    }
+    .search-box:focus { border-color: var(--accent-blue); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    .input-group { margin-bottom: 0.8rem; }
+    .input-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600; }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: #090d16;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    /* ZONAS Y BOLO */
+    .zone-box {
+      background: #131d2e;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .zone-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 6px;
+    }
+    .zone-title { font-weight: bold; color: var(--accent-green); font-size: 1rem; }
+
+    /* ALERTAS */
+    .alert-banner {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alert-danger { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: #fca5a5; }
+    .alert-success { background: rgba(34, 197, 94, 0.15); border: 1px solid var(--accent-green); color: #86efac; }
+
+    /* LISTA EQUIPOS */
+    .equip-list { max-height: 320px; overflow-y: auto; padding-right: 4px; }
+    .equip-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .equip-info { flex: 1; }
+    .equip-name { font-weight: 500; font-size: 0.9rem; }
+    .equip-cat { font-size: 0.72rem; color: var(--text-muted); }
+    .equip-power { font-size: 0.8rem; color: var(--accent-orange); font-weight: 600; }
+
+    .counter-controls { display: flex; align-items: center; gap: 6px; }
+    .btn-qty {
+      width: 28px; height: 28px;
+      border-radius: 6px; border: none;
+      background: var(--card-border);
+      color: var(--text-main);
+      font-weight: bold; font-size: 1rem;
+      cursor: pointer;
+    }
+    .btn-qty:active { background: var(--accent-blue); }
+    .qty-display { min-width: 20px; text-align: center; font-weight: bold; font-size: 0.9rem; }
+
+    /* INDICADORES */
+    .metric-box {
+      background: rgba(9, 13, 22, 0.6);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid var(--card-border);
+    }
+    .metric-value { font-size: 1.25rem; font-weight: bold; color: var(--accent-green); margin-top: 2px; }
+    .metric-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent-blue);
+      color: #0f172a;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+    .btn-small {
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      background: var(--card-border);
+      color: var(--text-main);
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body>
 
-  <!-- HEADER -->
-  <header class="border-b border-gray-800 bg-gray-950/80 sticky top-0 z-50 backdrop-blur-md no-print">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <div class="flex items-center gap-3">
-        <div class="bg-blue-600/20 text-blue-400 p-2.5 rounded-xl border border-blue-500/30">
-          <i class="fa-solid font-bold fa-bolt text-xl"></i>
-        </div>
-        <div>
-          <h1 class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
-            AV ENGINE PRO <span class="bg-blue-600/20 text-blue-400 text-xs px-2 py-0.5 rounded border border-blue-500/30 font-medium">v3.0</span>
-          </h1>
-          <p class="text-xs text-gray-400">Gestor Electrónico y de Zonas para Técnicos AV</p>
-        </div>
-      </div>
-
-      <!-- Quick Status Badge -->
-      <div id="header-status-badge" class="flex items-center gap-3 bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-lg text-xs">
-        <span class="text-gray-400">Carga Global:</span>
-        <span id="global-watts-badge" class="font-bold text-amber-400">0 W</span>
-        <span class="text-gray-600">|</span>
-        <span id="global-amps-badge" class="font-bold text-blue-400">0.0 A</span>
-      </div>
-    </div>
-
-    <!-- TAB NAV -->
-    <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto gap-2 border-t border-gray-800/60 pt-2 no-print">
-      <button onclick="switchTab('tab-zones')" id="btn-tab-zones" class="tab-btn active px-4 py-2 text-sm font-semibold rounded-t-lg transition-all flex items-center gap-2 border-b-2 border-blue-500 text-blue-400 bg-gray-900/60 whitespace-nowrap">
-        <i class="fa-solid fa-layer-group"></i> ⚡ Zonas & Alimentación
-      </button>
-      <button onclick="switchTab('tab-led')" id="btn-tab-led" class="tab-btn px-4 py-2 text-sm font-semibold rounded-t-lg transition-all flex items-center gap-2 border-b-2 border-transparent text-gray-400 hover:text-gray-200 hover:bg-gray-900/30 whitespace-nowrap">
-        <i class="fa-solid fa-tv"></i> 🖥️ Pantalla LED
-      </button>
-      <button onclick="switchTab('tab-proj')" id="btn-tab-proj" class="tab-btn px-4 py-2 text-sm font-semibold rounded-t-lg transition-all flex items-center gap-2 border-b-2 border-transparent text-gray-400 hover:text-gray-200 hover:bg-gray-900/30 whitespace-nowrap">
-        <i class="fa-solid fa-video"></i> 📹 Proyección
-      </button>
-      <button onclick="switchTab('tab-summary')" id="btn-tab-summary" class="tab-btn px-4 py-2 text-sm font-semibold rounded-t-lg transition-all flex items-center gap-2 border-b-2 border-transparent text-gray-400 hover:text-gray-200 hover:bg-gray-900/30 whitespace-nowrap">
-        <i class="fa-solid fa-file-invoice"></i> 📄 Resumen General Bolo
-      </button>
-    </div>
+  <header>
+    <h1>⚡ AV ENGINE PRO - GESTOR DE EVENTOS</h1>
+    <p>Distribución de Cuadros por Zona, Líneas Directas y Proyectos</p>
   </header>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="openTab('tab-elec')">⚡ Zonas & Cuadros</button>
+    <button class="tab-btn" onclick="openTab('tab-led')">🖥️ Pantalla LED</button>
+    <button class="tab-btn" onclick="openTab('tab-proj')">📹 Proyección</button>
+    <button class="tab-btn" onclick="openTab('tab-summary')">📄 Resumen Bolo</button>
+  </nav>
 
-    <!-- PESTAÑA 1: ZONAS Y ALIMENTACIÓN -->
-    <div id="tab-zones" class="tab-page space-y-6">
-      
-      <!-- Zone Selector / Creator Top Bar -->
-      <div class="custom-glass rounded-2xl p-4 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
-        <div class="flex items-center gap-3">
-          <div class="text-amber-400 font-bold text-sm uppercase tracking-wider flex items-center gap-2">
-            <i class="fa-solid fa-location-dot"></i> Zona Activa:
+  <div class="container">
+
+    <!-- PESTAÑA 1: ELÉCTRICA Y ZONAS -->
+    <div id="tab-elec" class="tab-content active">
+      <div class="card">
+        <div class="card-title">Resumen General del Evento</div>
+        <div class="grid-3">
+          <div class="metric-box">
+            <div class="metric-label">Consumo Total Bolo</div>
+            <div class="metric-value" id="total-watts">0 W</div>
           </div>
-          <select id="zone-selector" onchange="selectActiveZone(this.value)" class="bg-gray-950 text-white font-semibold border border-gray-700 rounded-xl px-4 py-2 focus:outline-none focus:border-blue-500 text-sm flex-grow md:flex-grow-0 min-w-[200px]">
-            <!-- Dynamic Zones -->
-          </select>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button onclick="createNewZone()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
-            <i class="fa-solid fa-plus"></i> Crear Nueva Zona
-          </button>
-          <button onclick="deleteCurrentZone()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-2 rounded-xl text-sm font-medium transition" title="Eliminar Zona Activa">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
+          <div class="metric-box">
+            <div class="metric-label">Amperaje Global (230V)</div>
+            <div class="metric-value" id="total-amps" style="color: var(--accent-orange)">0.0 A</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Líneas / Mangueras Totales</div>
+            <div class="metric-value" id="total-lines" style="color: var(--accent-purple)">0 Líneas</div>
+          </div>
         </div>
       </div>
 
-      <!-- ACTIVE ZONE CARD & FEED CONFIG -->
-      <div id="zone-details-card" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- LEFT: FEED & STATUS -->
-        <div class="lg:col-span-1 space-y-4">
-          <div class="custom-glass rounded-2xl p-5 space-y-4 border-l-4 border-l-blue-500">
-            <div>
-              <span id="active-zone-badge" class="text-xs font-semibold uppercase text-blue-400 tracking-wider">Configuración Eléctrica</span>
-              <h2 id="active-zone-name" class="text-xl font-bold text-white mt-0.5">Control Principal</h2>
-            </div>
-
-            <!-- Feed Selection for this specific zone -->
-            <div class="space-y-1.5">
-              <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Acometida/Toma en esta zona:</label>
-              <select id="active-zone-feed" onchange="updateZoneFeed(this.value)" class="w-full bg-gray-950 text-gray-200 border border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500">
-                <option value="1_schuko">1x Schuko 16A (3.680W max / 2.300W seg.)</option>
-                <option value="2_schuko">2x Schuko 16A Independientes (7.360W max)</option>
-                <option value="cetac_16_mono">1x Cetac Monofásico 16A (3.680W max)</option>
-                <option value="cetac_32_mono">1x Cetac Monofásico 32A (7.360W max)</option>
-                <option value="cetac_32_tri">1x Cetac Trifásico 32A (22.000W max)</option>
-                <option value="cetac_64_tri">1x Cetac Trifásico 64A (44.000W max)</option>
-              </select>
-            </div>
-
-            <!-- Margin Safety Threshold -->
-            <div class="space-y-1.5">
-              <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Margen Seguridad x Línea/Regleta:</label>
-              <select id="active-zone-safety" onchange="updateZoneSafetyThreshold(this.value)" class="w-full bg-gray-950 text-gray-200 border border-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                <option value="2300" selected>2.300 W (10A - Recomendado Eventos)</option>
-                <option value="3000">3.000 W (13A - Margen Medio)</option>
-                <option value="3680">3.680 W (16A - Límite Físico Térmico)</option>
-              </select>
-            </div>
-
-            <!-- Metrics grid for active zone -->
-            <div class="grid grid-cols-2 gap-3 pt-2">
-              <div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800 text-center">
-                <div class="text-[10px] text-gray-400 uppercase font-bold">Consumo Zona</div>
-                <div id="zone-watts" class="text-xl font-extrabold text-amber-400 mt-0.5">0 W</div>
-              </div>
-              <div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800 text-center">
-                <div class="text-[10px] text-gray-400 uppercase font-bold">Amperaje Zona</div>
-                <div id="zone-amps" class="text-xl font-extrabold text-blue-400 mt-0.5">0.0 A</div>
-              </div>
-            </div>
-
-            <!-- Calculated Lines / Daisy Chain info -->
-            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-gray-800 space-y-1">
-              <div class="flex justify-between items-center text-xs">
-                <span class="text-gray-400">Líneas/Mangueras desde Cuadro:</span>
-                <span id="zone-lines-needed" class="font-bold text-purple-400">0 Tiradas</span>
-              </div>
-              <p class="text-[11px] text-gray-500 leading-tight">
-                *Puedes encadenar regletas en esta zona mientras la suma acumulada de la tirada no supere el margen configurado.
-              </p>
-            </div>
-
-            <!-- Feed Capacity Status Alert -->
-            <div id="zone-status-alert" class="p-3.5 rounded-xl border text-xs font-semibold flex items-start gap-2.5">
-              <!-- Dynamic alert -->
-            </div>
-          </div>
+      <div class="card">
+        <div class="card-title">
+          <span>Configuración de Zonas / Ubicaciones</span>
+          <button class="btn-small" onclick="addZone()">+ Crear Nueva Zona</button>
         </div>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">
+          Crea ubicaciones (ej. <i>Control, Escenario / Bolo, Rack Conversores</i>), asigna la toma del cuadro que tienen allí y añade sus equipos.
+        </p>
 
-        <!-- RIGHT: EQUIPMENT PICKER & ADDED ITEMS -->
-        <div class="lg:col-span-2 space-y-4">
-          <div class="custom-glass rounded-2xl p-5 space-y-4">
-            
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-800 pb-3">
-              <h3 class="font-bold text-gray-200 text-base flex items-center gap-2">
-                <i class="fa-solid fa-plug text-blue-400"></i> Equipos Asignados a esta Zona
-              </h3>
-              <span id="zone-items-count-badge" class="text-xs bg-gray-800 text-gray-300 px-2.5 py-1 rounded-full font-medium">0 Equipos</span>
-            </div>
-
-            <!-- Equipment Selected List -->
-            <div id="zone-added-items-list" class="space-y-2 min-h-[100px] max-h-[220px] overflow-y-auto pr-1">
-              <!-- Dynamic items -->
-            </div>
-
-            <!-- Add Equipment Search & Drawer -->
-            <div class="pt-4 border-t border-gray-800 space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="text-xs font-bold text-gray-300 uppercase tracking-wider">Añadir Equipos de la Catálogo AV:</label>
-                <div class="relative w-1/2">
-                  <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-gray-500"></i>
-                  <input type="text" id="equip-search-input" oninput="renderEquipmentCatalog()" placeholder="Buscar equipo o marca..." class="w-full bg-gray-950 border border-gray-800 text-xs rounded-lg pl-8 pr-3 py-1.5 text-gray-200 focus:outline-none focus:border-blue-500">
-                </div>
-              </div>
-
-              <!-- Catalog List -->
-              <div id="equip-catalog-container" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-[280px] overflow-y-auto pr-1">
-                <!-- Equipment Catalog Item template -->
-              </div>
-            </div>
-
-          </div>
-        </div>
-
+        <div id="zones-container"></div>
       </div>
 
-      <!-- ALL ZONES SUMMARY OVERVIEW GRID -->
-      <div class="space-y-3">
-        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-          <i class="fa-solid fa-network-wired"></i> Vista General de Todas las Zonas del Proyecto
-        </h3>
-        <div id="all-zones-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Cards of all zones -->
+      <div class="card">
+        <div class="card-title">Añadir Equipos a Zonas</div>
+        <div class="input-group">
+          <label>Selecciona Zona de Destino:</label>
+          <select id="select-active-zone" onchange="renderEquipList()"></select>
         </div>
+        <input type="text" id="search-equip" class="search-box" placeholder="🔍 Buscar equipo (ej. Yamaha, Sony, Blackmagic, Monitor AOC)..." oninput="renderEquipList()">
+        <div class="equip-list" id="equip-container"></div>
       </div>
-
     </div>
 
-    <!-- PESTAÑA 2: PANTALLA LED -->
-    <div id="tab-led" class="tab-page hidden space-y-6">
-      <div class="custom-glass rounded-2xl p-6 space-y-6">
-        <div class="border-b border-gray-800 pb-4">
-          <h2 class="text-xl font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-tv text-blue-400"></i> Calculadora Técnica de Pantallas LED
-          </h2>
-          <p class="text-xs text-gray-400 mt-1">Calcula dimensiones, resolución nativa, aspect ratio, consumo máximo y puertos Novastar requeridos.</p>
+    <!-- PESTAÑA 2: PANTALLAS LED -->
+    <div id="tab-led" class="tab-content">
+      <div class="card">
+        <div class="card-title">Dimensiones y Módulos LED</div>
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Ancho Pantalla (Metros)</label>
+            <input type="number" id="led-w" value="6" step="0.5" oninput="calcLED()">
+          </div>
+          <div class="input-group">
+            <label>Alto Pantalla (Metros)</label>
+            <input type="number" id="led-h" value="3.5" step="0.5" oninput="calcLED()">
+          </div>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="space-y-1">
-            <label class="text-xs font-semibold text-gray-400 uppercase">Ancho Pantalla (m):</label>
-            <input type="number" id="led-width" value="6" step="0.5" oninput="calculateLED()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
-          </div>
-          <div class="space-y-1">
-            <label class="text-xs font-semibold text-gray-400 uppercase">Alto Pantalla (m):</label>
-            <input type="number" id="led-height" value="3.5" step="0.5" oninput="calculateLED()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
-          </div>
-          <div class="space-y-1">
-            <label class="text-xs font-semibold text-gray-400 uppercase">Tamaño Cabinet (cm):</label>
-            <select id="led-cab-size" onchange="calculateLED()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Tamaño de Módulo / Cabinet</label>
+            <select id="led-cab-size" onchange="calcLED()">
               <option value="50x50">50 x 50 cm</option>
               <option value="100x50">100 x 50 cm</option>
             </select>
           </div>
-          <div class="space-y-1">
-            <label class="text-xs font-semibold text-gray-400 uppercase">Pixel Pitch (mm):</label>
-            <select id="led-pitch" onchange="calculateLED()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+          <div class="input-group">
+            <label>Pixel Pitch (mm)</label>
+            <select id="led-pitch" onchange="calcLED()">
               <option value="1.9">P1.9 mm</option>
               <option value="2.6" selected>P2.6 mm</option>
               <option value="2.9">P2.9 mm</option>
@@ -273,694 +299,449 @@
             </select>
           </div>
         </div>
-
-        <!-- RESULTS LED GRID -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-800">
-          <div class="bg-gray-950/80 p-4 rounded-xl border border-gray-800 text-center">
-            <div class="text-xs text-gray-400 font-medium">Resolución Total</div>
-            <div id="led-res-val" class="text-lg md:text-xl font-bold text-blue-400 mt-1">0 x 0 px</div>
-          </div>
-          <div class="bg-gray-950/80 p-4 rounded-xl border border-gray-800 text-center">
-            <div class="text-xs text-gray-400 font-medium">Aspect Ratio</div>
-            <div id="led-ratio-val" class="text-lg md:text-xl font-bold text-purple-400 mt-1">16:9</div>
-          </div>
-          <div class="bg-gray-950/80 p-4 rounded-xl border border-gray-800 text-center">
-            <div class="text-xs text-gray-400 font-medium">Cabinets Totales</div>
-            <div id="led-cabs-val" class="text-lg md:text-xl font-bold text-amber-400 mt-1">0 Cabs</div>
-          </div>
-          <div class="bg-gray-950/80 p-4 rounded-xl border border-gray-800 text-center">
-            <div class="text-xs text-gray-400 font-medium">Puertos Novastar (1Gbps)</div>
-            <div id="led-ports-val" class="text-lg md:text-xl font-bold text-emerald-400 mt-1">0 Puertos</div>
-          </div>
-        </div>
-
-        <!-- Power Info for LED -->
-        <div class="bg-blue-950/20 border border-blue-500/20 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <i class="fa-solid fa-bolt text-amber-400 text-2xl"></i>
-            <div>
-              <div class="text-xs font-bold text-blue-300 uppercase">Consumo Estimado de esta Pantalla</div>
-              <div class="text-xs text-gray-400">Aproximado según pico máximo (blanco 100%)</div>
-            </div>
-          </div>
-          <div class="text-right">
-            <div id="led-power-val" class="text-xl font-extrabold text-amber-400">0 W / 0.0 A</div>
-            <div class="text-[11px] text-gray-400">Se recomienda 1 línea de 16A cada 3.000W</div>
-          </div>
-        </div>
-
       </div>
-    </div>
 
-    <!-- PESTAÑA 3: PROYECCIÓN -->
-    <div id="tab-proj" class="tab-page hidden space-y-6">
-      <div class="custom-glass rounded-2xl p-6 space-y-6">
-        <div class="border-b border-gray-800 pb-4">
-          <h2 class="text-xl font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-video text-blue-400"></i> Calculadora de Ópticas y Distancia de Proyección
-          </h2>
-          <p class="text-xs text-gray-400 mt-1">Calcula el Throw Ratio necesario o la distancia exacta requerida para llenar tu pantalla.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="space-y-1">
-            <label class="text-xs font-semibold text-gray-400 uppercase">Ancho de Pantalla (m):</label>
-            <input type="number" id="proj-screen-w" value="5.0" step="0.1" oninput="calculateProjection()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+      <div class="card">
+        <div class="card-title">Resultados Técnicos LED</div>
+        <div class="grid-2" style="margin-bottom:10px;">
+          <div class="metric-box">
+            <div class="metric-label">Resolución Total</div>
+            <div class="metric-value" id="led-res">0 x 0 px</div>
           </div>
-          <div class="space-y-1">
-            <label class="text-xs font-semibold text-gray-400 uppercase">Distancia Disponible (m):</label>
-            <input type="number" id="proj-distance" value="7.5" step="0.1" oninput="calculateProjection()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
-          </div>
-          <div class="space-y-1">
-            <label class="text-xs font-semibold text-gray-400 uppercase">Ratio de tu Lente (Throw Ratio):</label>
-            <input type="number" id="proj-lens-ratio" value="1.5" step="0.01" oninput="calculateProjectionByLens()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500" placeholder="Ej. 1.2 o 1.8">
+          <div class="metric-box">
+            <div class="metric-label">Aspect Ratio</div>
+            <div class="metric-value" id="led-ratio" style="color:var(--accent-purple)">16:9</div>
           </div>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-800">
-          <div class="bg-gray-950/80 p-5 rounded-xl border border-gray-800 text-center space-y-1">
-            <div class="text-xs text-gray-400 font-medium">Factor de Lente Requerido (Throw Ratio)</div>
-            <div id="proj-res-ratio" class="text-2xl font-extrabold text-blue-400">1.50 : 1</div>
-            <div class="text-[11px] text-gray-500">Para cubrir la pantalla a la distancia dada</div>
+        <div class="grid-3">
+          <div class="metric-box">
+            <div class="metric-label">Nº Módulos Totales</div>
+            <div class="metric-value" id="led-cabinets">0</div>
           </div>
-          <div class="bg-gray-950/80 p-5 rounded-xl border border-gray-800 text-center space-y-1">
-            <div class="text-xs text-gray-400 font-medium">Distancia Sugerida con tu Factor Lente</div>
-            <div id="proj-res-dist" class="text-2xl font-extrabold text-emerald-400">7.50 m</div>
-            <div class="text-[11px] text-gray-500">Ubicación ideal del proyector</div>
+          <div class="metric-box">
+            <div class="metric-label">Consumo Máximo</div>
+            <div class="metric-value" id="led-max-w" style="color:var(--accent-orange)">0 W</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Puertos Novastar (Gigabit)</div>
+            <div class="metric-value" id="led-ports" style="color:var(--accent-blue)">0 Puertos</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PESTAÑA 4: RESUMEN GENERAL BOLO -->
-    <div id="tab-summary" class="tab-page hidden space-y-6">
-      <div class="custom-glass rounded-2xl p-6 space-y-6">
-        
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-800 pb-4 no-print">
-          <div>
-            <h2 class="text-xl font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-file-invoice text-blue-400"></i> Informe Técnico para Eléctrico / Producción
-            </h2>
-            <p class="text-xs text-gray-400 mt-1">Resumen completo del desglose por zonas, mangueras requeridas y equipos para imprimir o PDF.</p>
+    <!-- PESTAÑA 3: PROYECCIÓN -->
+    <div id="tab-proj" class="tab-content">
+      <div class="card">
+        <div class="card-title">Cálculo de Ópticas y Distancia</div>
+        <div class="input-group">
+          <label>Ancho de Pantalla a Llenar (Metros)</label>
+          <input type="number" id="proj-screen-w" value="5.0" step="0.1" oninput="calcProj()">
+        </div>
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Distancia Proyector → Pantalla (m)</label>
+            <input type="number" id="proj-dist" value="7.5" step="0.1" oninput="calcProj()">
           </div>
-          <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
-            <i class="fa-solid fa-print"></i> Imprimir / Exportar PDF
-          </button>
+          <div class="input-group">
+            <label>Factor Lente / Throw Ratio (Si la tienes)</label>
+            <input type="number" id="proj-lens-ratio" value="1.5" step="0.01" placeholder="Ej. 1.2 - 1.8" oninput="calcProjByLens()">
+          </div>
         </div>
+      </div>
 
-        <!-- Printable Document Wrapper -->
-        <div id="summary-report-content" class="space-y-6">
-          <!-- Dynamic summary content -->
+      <div class="card">
+        <div class="card-title">Resultado de Proyección</div>
+        <div class="grid-2">
+          <div class="metric-box">
+            <div class="metric-label">Ratio Necesario (Throw Ratio)</div>
+            <div class="metric-value" id="res-lens-needed" style="color:var(--accent-blue)">1.50 : 1</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Distancia Recomendada con tu Lente</div>
+            <div class="metric-value" id="res-dist-needed" style="color:var(--accent-green)">7.50 m</div>
+          </div>
         </div>
-
       </div>
     </div>
 
-  </main>
+    <!-- PESTAÑA 4: RESUMEN BOLO -->
+    <div id="tab-summary" class="tab-content">
+      <div class="card">
+        <div class="card-title">Informe Técnico de Distribución</div>
+        <div id="summary-content" style="font-size:0.88rem; line-height:1.6; color:var(--text-muted)">
+          No hay zonas ni equipos configurados.
+        </div>
+        <button class="btn-primary" onclick="window.print()">🖨️ Imprimir / Guardar PDF para Eléctrico</button>
+      </div>
+    </div>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-gray-800/80 bg-gray-950 py-4 text-center text-xs text-gray-500 no-print">
-    AV Engine Pro &copy; 2026 - Diseñado para Técnicos de Vídeo, Iluminación y Sonido.
-  </footer>
+  </div>
 
   <script>
-    // BASE DE DATOS COMPLETA DE EQUIPOS CON VATIOS REALES
-    const equipmentCatalog = [
-      { id: 1, cat: "General", name: "TV PLASMA 65\"", w: 180 },
-      { id: 2, cat: "General", name: "DISTRI SDI BLACK MAGIC", w: 240 },
-      { id: 3, cat: "General", name: "ATEN 3G SDI - HDMI", w: 240 },
-      { id: 4, cat: "General", name: "PC ASUS Control", w: 240 },
-      { id: 5, cat: "General", name: "Data video DAC 70", w: 240 },
-      { id: 6, cat: "General", name: "Conversor fibra Blackmagic", w: 240 },
-      { id: 7, cat: "General", name: "Conversor Sdi-hdmi blackmagic", w: 240 },
-      { id: 8, cat: "General", name: "Asus vivabook", w: 240 },
-      { id: 9, cat: "General", name: "Mac Alimentador 96w usb-c", w: 240 },
-      { id: 10, cat: "Cámaras Blackmagic", name: "Cámara Blackmagic URSA Mini Pro", w: 150 },
-      { id: 11, cat: "Cámaras Blackmagic", name: "Cámara Blackmagic URSA G2", w: 250 },
-      { id: 12, cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Pocket Cinema 6K", w: 120 },
-      { id: 13, cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Pocket Cinema 4K", w: 100 },
-      { id: 14, cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Micro Studio 4K", w: 45 },
-      { id: 15, cat: "Conversores Blackmagic", name: "Conversor Blackmagic ATEM Mini", w: 25 },
-      { id: 16, cat: "Conversores Blackmagic", name: "Conversor Blackmagic Teranex 12G", w: 50 },
-      { id: 17, cat: "Conversores Blackmagic", name: "Conversor Blackmagic Mini Converter SDI/HDMI", w: 15 },
-      { id: 18, cat: "Conversores Blackmagic", name: "Conversor Blackmagic Micro Converter HDMI/SDI", w: 10 },
-      { id: 19, cat: "Conversores Blackmagic", name: "Conversor Blackmagic 12G SDI", w: 30 },
-      { id: 20, cat: "Monitores AOC", name: "Monitor AOC 32\"", w: 48 },
-      { id: 21, cat: "Monitores AOC", name: "Monitor AOC 32\" (4K)", w: 55 },
-      { id: 22, cat: "Monitores AOC", name: "Monitor AOC 32\" Curvo", w: 50 },
-      { id: 23, cat: "Monitores Samsung", name: "Monitor Samsung 32\"", w: 115 },
-      { id: 24, cat: "Monitores Samsung", name: "Monitor Samsung 32\" Curvo", w: 55 },
-      { id: 25, cat: "Monitores Samsung", name: "Monitor Samsung 40\"", w: 60 },
-      { id: 26, cat: "Monitores Samsung", name: "Monitor Samsung 49\"", w: 75 },
-      { id: 27, cat: "Monitores Samsung", name: "Monitor Samsung 55\"", w: 80 },
-      { id: 28, cat: "Monitores Samsung", name: "Monitor Samsung 65\"", w: 95 },
-      { id: 29, cat: "Plasmas Samsung", name: "Plasma Samsung 32\"", w: 80 },
-      { id: 30, cat: "Plasmas Samsung", name: "Plasma Samsung 40\"", w: 100 },
-      { id: 31, cat: "Plasmas Samsung", name: "Plasma Samsung 43\"", w: 120 },
-      { id: 32, cat: "Plasmas Samsung", name: "Plasma Samsung 50\"", w: 150 },
-      { id: 33, cat: "Plasmas Samsung", name: "Plasma Samsung 55\"", w: 170 },
-      { id: 34, cat: "Plasmas Samsung", name: "Plasma Samsung 60\"", w: 180 },
-      { id: 35, cat: "Plasmas Samsung", name: "Plasma Samsung 65\"", w: 200 },
-      { id: 36, cat: "Plasmas Samsung", name: "Plasma Samsung 70\"", w: 220 },
-      { id: 37, cat: "Plasmas Samsung", name: "Plasma Samsung 80\"", w: 250 },
-      { id: 38, cat: "Plasmas Samsung", name: "Plasma Samsung 90\"", w: 300 },
-      { id: 39, cat: "Equipos Audiovisuales", name: "E2 (Switching, Streaming)", w: 60 },
-      { id: 40, cat: "Equipos Audiovisuales", name: "D3 (Switching, Control)", w: 75 },
-      { id: 41, cat: "Receptores y Decodificadores", name: "Receptor Blackmagic DeckLink Studio 4K", w: 30 },
-      { id: 42, cat: "Receptores y Decodificadores", name: "Receptor Blackmagic DeckLink 8K Pro", w: 45 },
-      { id: 43, cat: "Receptores y Decodificadores", name: "Receptor Blackmagic Video Assist 4K", w: 15 },
-      { id: 44, cat: "Audio / Sonido", name: "Audio de consola Yamaha QL5", w: 200 },
-      { id: 45, cat: "Audio / Sonido", name: "Audio de consola Yamaha TF5", w: 250 },
-      { id: 46, cat: "Audio / Sonido", name: "Audio de consola Behringer X32", w: 150 },
-      { id: 47, cat: "Audio / Sonido", name: "Audio de consola Allen & Heath SQ5", w: 175 },
-      { id: 48, cat: "Audio / Sonido", name: "Receptor de audio inalámbrico Shure BLX", w: 12 },
-      { id: 49, cat: "Proyección", name: "Proyector Epson 3500 lumens", w: 200 },
-      { id: 50, cat: "Proyección", name: "Proyector Epson 5000 lumens", w: 250 },
-      { id: 51, cat: "Proyección", name: "Proyector BenQ 3000 lumens", w: 200 },
-      { id: 52, cat: "Proyección", name: "Proyector BenQ 5000 lumens", w: 300 },
-      { id: 53, cat: "Proyección", name: "Proyector ViewSonic 3500 lumens", w: 180 },
-      { id: 54, cat: "Proyección", name: "Proyector ViewSonic 5000 lumens", w: 250 },
-      { id: 55, cat: "Grabación", name: "Grabador de vídeo Blackmagic HyperDeck Studio", w: 40 },
-      { id: 56, cat: "Grabación", name: "Grabador de vídeo Blackmagic HyperDeck Mini", w: 30 },
-      { id: 57, cat: "Monitores de Campo", name: "Monitor de campo 7\"", w: 20 },
-      { id: 58, cat: "Monitores de Campo", name: "Monitor de campo 5\"", w: 15 },
-      { id: 59, cat: "Cámaras adicionales", name: "Cámara Sony FX6", w: 180 },
-      { id: 60, cat: "Cámaras adicionales", name: "Cámara Sony FX9", w: 200 },
-      { id: 61, cat: "Cámaras adicionales", name: "Cámara Sony A7S III", w: 120 },
-      { id: 62, cat: "Cámaras adicionales", name: "Cámara Canon EOS C300 Mark III", w: 250 },
-      { id: 63, cat: "Cámaras adicionales", name: "Cámara Canon EOS C500 Mark II", w: 300 },
-      { id: 64, cat: "Cámaras adicionales", name: "Cámara Red Komodo 6K", w: 200 },
-      { id: 65, cat: "Cámaras adicionales", name: "Cámara ARRI Alexa LF", w: 350 },
-      { id: 66, cat: "Transmisión y Enlace", name: "Sistema de video inalámbrico Teradek Bolt 4K", w: 30 },
-      { id: 67, cat: "Transmisión y Enlace", name: "Sistema de video inalámbrico Hollyland Mars", w: 25 },
-      { id: 68, cat: "Transmisión y Enlace", name: "Receptor de señal Teradek RT", w: 20 },
-      { id: 69, cat: "Transmisión y Enlace", name: "Convertidor de señales SDI a HDMI", w: 15 },
-      { id: 70, cat: "Consolas Control", name: "Consola de control Blackmagic ATEM Mini Pro", w: 35 },
-      { id: 71, cat: "Consolas Control", name: "Consola de control Blackmagic ATEM 2 M/E", w: 50 }
+    // BASE DE DATOS DE EQUIPOS DEL EXCEL
+    const excelEquipments = [
+      { cat: "General", name: "TV PLASMA 65", w: 180 },
+      { cat: "General", name: "DISTRI SDI BLACK MAGIC", w: 240 },
+      { cat: "General", name: "ATEN 3G SDI - HDMI", w: 240 },
+      { cat: "General", name: "PC ASUS", w: 240 },
+      { cat: "General", name: "Data video DAC 70", w: 240 },
+      { cat: "General", name: "Conversor fibra Blackmagic", w: 240 },
+      { cat: "General", name: "Conversor Sdi-hdmi blackmagic", w: 240 },
+      { cat: "General", name: "Asus vivabook", w: 240 },
+      { cat: "General", name: "Mac Alimentador 96w usb-c", w: 240 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic URSA Mini Pro", w: 150 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic URSA G2", w: 250 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Pocket Cinema 6K", w: 120 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Pocket Cinema 4K", w: 100 },
+      { cat: "Cámaras Blackmagic", name: "Cámara Blackmagic Micro Studio 4K", w: 45 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic ATEM Mini", w: 25 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic Teranex 12G", w: 50 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic Mini Converter SDI/HDMI", w: 15 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic Micro Converter HDMI/SDI", w: 10 },
+      { cat: "Conversores Blackmagic", name: "Conversor Blackmagic 12G SDI", w: 30 },
+      { cat: "Monitores AOC", name: "Monitor AOC 32\"", w: 48 },
+      { cat: "Monitores AOC", name: "Monitor AOC 32\" (4K)", w: 55 },
+      { cat: "Monitores AOC", name: "Monitor AOC 32\" Curvo", w: 50 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 32\"", w: 115 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 32\" Curvo", w: 55 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 40\"", w: 60 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 49\"", w: 75 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 55\"", w: 80 },
+      { cat: "Monitores Samsung", name: "Monitor Samsung 65\"", w: 95 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 32\"", w: 80 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 40\"", w: 100 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 43\"", w: 120 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 50\"", w: 150 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 55\"", w: 170 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 60\"", w: 180 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 65\"", w: 200 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 70\"", w: 220 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 80\"", w: 250 },
+      { cat: "Plasmas Samsung", name: "Plasma Samsung 90\"", w: 300 },
+      { cat: "Equipos Audiovisuales", name: "E2 (Switching, Streaming)", w: 60 },
+      { cat: "Equipos Audiovisuales", name: "D3 (Switching, Control)", w: 75 },
+      { cat: "Receptores y Decodificadores", name: "Receptor Blackmagic DeckLink Studio 4K", w: 30 },
+      { cat: "Receptores y Decodificadores", name: "Receptor Blackmagic DeckLink 8K Pro", w: 45 },
+      { cat: "Receptores y Decodificadores", name: "Receptor Blackmagic Video Assist 4K", w: 15 },
+      { cat: "Audio/Video", name: "Audio de consola Yamaha QL5", w: 200 },
+      { cat: "Audio/Video", name: "Audio de consola Yamaha TF5", w: 250 },
+      { cat: "Audio/Video", name: "Audio de consola Behringer X32", w: 150 },
+      { cat: "Audio/Video", name: "Audio de consola Allen & Heath SQ5", w: 175 },
+      { cat: "Audio/Video", name: "Receptor de audio inalámbrico Shure BLX", w: 12 },
+      { cat: "Otros Equipos", name: "Proyector Epson 3500 lumens", w: 200 },
+      { cat: "Otros Equipos", name: "Proyector Epson 5000 lumens", w: 250 },
+      { cat: "Otros Equipos", name: "Proyector BenQ 3000 lumens", w: 200 },
+      { cat: "Otros Equipos", name: "Proyector BenQ 5000 lumens", w: 300 },
+      { cat: "Otros Equipos", name: "Proyector ViewSonic 3500 lumens", w: 180 },
+      { cat: "Otros Equipos", name: "Proyector ViewSonic 5000 lumens", w: 250 },
+      { cat: "Equipos de Grabación", name: "Grabador de vídeo Blackmagic HyperDeck Studio", w: 40 },
+      { cat: "Equipos de Grabación", name: "Grabador de vídeo Blackmagic HyperDeck Mini", w: 30 },
+      { cat: "Monitor de campo", name: "Monitor de campo 7\"", w: 20 },
+      { cat: "Monitor de campo", name: "Monitor de campo 5\"", w: 15 },
+      { cat: "Cámaras adicionales", name: "Cámara Sony FX6", w: 180 },
+      { cat: "Cámaras adicionales", name: "Cámara Sony FX9", w: 200 },
+      { cat: "Cámaras adicionales", name: "Cámara Sony A7S III", w: 120 },
+      { cat: "Cámaras adicionales", name: "Cámara Canon EOS C300 Mark III", w: 250 },
+      { cat: "Cámaras adicionales", name: "Cámara Canon EOS C500 Mark II", w: 300 },
+      { cat: "Cámaras adicionales", name: "Cámara Red Komodo 6K", w: 200 },
+      { cat: "Cámaras adicionales", name: "Cámara ARRI Alexa LF", w: 350 },
+      { cat: "Sistemas de Enlace y Transmisión", name: "Sistema de video inalámbrico Teradek Bolt 4K", w: 30 },
+      { cat: "Sistemas de Enlace y Transmisión", name: "Sistema de video inalámbrico Hollyland Mars", w: 25 },
+      { cat: "Receptores de señal y convertidores", name: "Receptor de señal Teradek RT", w: 20 },
+      { cat: "Receptores de señal y convertidores", name: "Convertidor de señales SDI a HDMI", w: 15 },
+      { cat: "Consolas de Control", name: "Consola de control Blackmagic ATEM Mini Pro", w: 35 },
+      { cat: "Consolas de Control", name: "Consola de control Blackmagic ATEM 2 M/E", w: 50 }
     ];
 
-    // FEED CAPACITIES (Watts Max)
-    const feedCapacities = {
-      "1_schuko": { name: "1x Schuko 16A", maxW: 3680, desc: "1 Línea monofásica de 16A" },
-      "2_schuko": { name: "2x Schuko 16A", maxW: 7360, desc: "2 Líneas monofásicas separadas" },
-      "cetac_16_mono": { name: "Cetac 16A Mono", maxW: 3680, desc: "Acometida Cetac 16A Monofásica" },
-      "cetac_32_mono": { name: "Cetac 32A Mono", maxW: 7360, desc: "Acometida Cetac 32A Monofásica" },
-      "cetac_32_tri": { name: "Cetac 32A Tri", maxW: 22000, desc: "Acometida Cetac 32A Trifásica" },
-      "cetac_64_tri": { name: "Cetac 64A Tri", maxW: 44000, desc: "Acometida Cetac 64A Trifásica" }
-    };
-
-    // APP STATE
+    // ESTRUCTURA DE ZONAS
     let zones = [
-      {
-        id: "zone-1",
-        name: "Control Principal",
-        feed: "2_schuko",
-        safetyThreshold: 2300,
-        items: { 4: 2, 7: 7, 20: 14 } // Default sample items
-      },
-      {
-        id: "zone-2",
-        name: "Escenario / Bolo",
-        feed: "1_schuko",
-        safetyThreshold: 2300,
-        items: { 10: 2, 50: 1 }
-      }
+      { id: 1, name: "Zona 1: Control Vídeo", feed: "1_schuko", items: {} },
+      { id: 2, name: "Zona 2: Escenario / Bolo", feed: "1_schuko", items: {} }
     ];
+    let activeZoneId = 1;
 
-    let activeZoneId = "zone-1";
+    function openTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+      if(tabId === 'tab-summary') renderSummary();
+    }
 
-    // TAB SWITCHER
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-page').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(el => {
-        el.classList.remove('border-blue-500', 'text-blue-400', 'bg-gray-900/60');
-        el.classList.add('border-transparent', 'text-gray-400');
-      });
-
-      document.getElementById(tabId).classList.remove('hidden');
-      const activeBtn = document.getElementById('btn-' + tabId);
-      activeBtn.classList.add('border-blue-500', 'text-blue-400', 'bg-gray-900/60');
-      activeBtn.classList.remove('border-transparent', 'text-gray-400');
-
-      if (tabId === 'tab-summary') {
-        renderSummaryReport();
+    function addZone() {
+      const zName = prompt("Nombre de la nueva zona (ej. Zona 3: Rack Conversores):", `Zona ${zones.length + 1}`);
+      if(zName) {
+        const newId = Date.now();
+        zones.push({ id: newId, name: zName, feed: "1_schuko", items: {} });
+        activeZoneId = newId;
+        renderZones();
+        renderActiveZoneSelect();
+        renderEquipList();
+        recalcProject();
       }
     }
 
-    // ZONE MANAGERS
-    function renderZoneSelector() {
-      const select = document.getElementById('zone-selector');
-      select.innerHTML = '';
-      zones.forEach(z => {
-        const opt = document.createElement('option');
-        opt.value = z.id;
-        opt.textContent = z.name;
-        if (z.id === activeZoneId) opt.selected = true;
-        select.appendChild(opt);
-      });
-    }
-
-    function selectActiveZone(zId) {
-      activeZoneId = zId;
-      renderActiveZoneUI();
-    }
-
-    function createNewZone() {
-      const zoneName = prompt("Nombre de la nueva Zona / Ubicación (ej. Photocall, Control LED):");
-      if (zoneName && zoneName.trim() !== "") {
-        const newZone = {
-          id: "zone-" + Date.now(),
-          name: zoneName.trim(),
-          feed: "1_schuko",
-          safetyThreshold: 2300,
-          items: {}
-        };
-        zones.push(newZone);
-        activeZoneId = newZone.id;
-        renderZoneSelector();
-        renderActiveZoneUI();
-        recalculateAll();
-      }
-    }
-
-    function deleteCurrentZone() {
-      if (zones.length <= 1) {
+    function deleteZone(zId) {
+      if(zones.length <= 1) {
         alert("Debes mantener al menos una zona en el proyecto.");
         return;
       }
-      const zone = zones.find(z => z.id === activeZoneId);
-      if (confirm(`¿Eliminar la zona "${zone.name}" y todos sus equipos asignados?`)) {
-        zones = zones.filter(z => z.id !== activeZoneId);
+      if(confirm("¿Seguro que quieres borrar esta zona y sus equipos?")) {
+        zones = zones.filter(z => z.id !== zId);
         activeZoneId = zones[0].id;
-        renderZoneSelector();
-        renderActiveZoneUI();
-        recalculateAll();
+        renderZones();
+        renderActiveZoneSelect();
+        renderEquipList();
+        recalcProject();
       }
     }
 
-    function updateZoneFeed(newFeed) {
-      const zone = zones.find(z => z.id === activeZoneId);
-      if (zone) {
+    function changeZoneFeed(zId, newFeed) {
+      const zone = zones.find(z => z.id === zId);
+      if(zone) {
         zone.feed = newFeed;
-        renderActiveZoneUI();
-        recalculateAll();
+        recalcProject();
       }
     }
 
-    function updateZoneSafetyThreshold(val) {
-      const zone = zones.find(z => z.id === activeZoneId);
-      if (zone) {
-        zone.safetyThreshold = parseInt(val);
-        renderActiveZoneUI();
-        recalculateAll();
-      }
-    }
-
-    function renderActiveZoneUI() {
-      const zone = zones.find(z => z.id === activeZoneId);
-      if (!zone) return;
-
-      document.getElementById('active-zone-name').textContent = zone.name;
-      document.getElementById('active-zone-feed').value = zone.feed;
-      document.getElementById('active-zone-safety').value = zone.safetyThreshold;
-
-      renderZoneItemsList(zone);
-      renderEquipmentCatalog();
-      recalculateZone(zone);
-    }
-
-    function renderZoneItemsList(zone) {
-      const container = document.getElementById('zone-added-items-list');
-      container.innerHTML = '';
-
-      const itemEntries = Object.entries(zone.items);
-      let totalCount = 0;
-
-      if (itemEntries.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-6 text-gray-500 text-xs italic bg-gray-950/40 rounded-xl border border-gray-800/80">
-            No hay equipos añadidos a esta zona. Selecciona equipos abajo para agregarlos.
-          </div>
-        `;
-        document.getElementById('zone-items-count-badge').textContent = '0 Equipos';
-        return;
-      }
-
-      itemEntries.forEach(([equipId, qty]) => {
-        totalCount += qty;
-        const item = equipmentCatalog.find(e => e.id == equipId);
-        if (!item) return;
-
-        const row = document.createElement('div');
-        row.className = "flex items-center justify-between bg-gray-950/90 border border-gray-800 rounded-xl px-3 py-2 text-xs";
-        row.innerHTML = `
-          <div>
-            <div class="font-semibold text-gray-200">${item.name}</div>
-            <div class="text-[10px] text-gray-400">${item.cat} • <span class="text-amber-400 font-medium">${item.w}W c/u</span></div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-bold text-gray-400 bg-gray-900 px-2 py-0.5 rounded border border-gray-800">${item.w * qty} W</span>
-            <div class="flex items-center gap-1 bg-gray-900 border border-gray-800 rounded-lg p-0.5">
-              <button onclick="changeQty(${item.id}, -1)" class="w-6 h-6 flex items-center justify-center rounded bg-gray-800 text-gray-200 hover:bg-gray-700 font-bold">-</button>
-              <span class="w-6 text-center font-bold text-white text-xs">${qty}</span>
-              <button onclick="changeQty(${item.id}, 1)" class="w-6 h-6 flex items-center justify-center rounded bg-gray-800 text-gray-200 hover:bg-gray-700 font-bold">+</button>
-            </div>
-          </div>
-        `;
-        container.appendChild(row);
-      });
-
-      document.getElementById('zone-items-count-badge').textContent = `${totalCount} Equipos`;
-    }
-
-    function changeQty(equipId, delta) {
-      const zone = zones.find(z => z.id === activeZoneId);
-      if (!zone) return;
-
-      const currentQty = zone.items[equipId] || 0;
-      const newQty = currentQty + delta;
-
-      if (newQty <= 0) {
-        delete zone.items[equipId];
-      } else {
-        zone.items[equipId] = newQty;
-      }
-
-      renderActiveZoneUI();
-      recalculateAll();
-    }
-
-    function renderEquipmentCatalog() {
-      const container = document.getElementById('equip-catalog-container');
-      const search = document.getElementById('equip-search-input').value.toLowerCase();
-      const zone = zones.find(z => z.id === activeZoneId);
-      container.innerHTML = '';
-
-      const filtered = equipmentCatalog.filter(e => 
-        e.name.toLowerCase().includes(search) || e.cat.toLowerCase().includes(search)
-      );
-
-      filtered.forEach(item => {
-        const qtyInZone = (zone && zone.items[item.id]) ? zone.items[item.id] : 0;
-        const card = document.createElement('div');
-        card.className = "bg-gray-950/60 border border-gray-800/80 hover:border-gray-700 rounded-xl p-2.5 flex items-center justify-between gap-2 text-xs transition";
-        card.innerHTML = `
-          <div class="truncate">
-            <div class="font-medium text-gray-200 truncate">${item.name}</div>
-            <div class="text-[10px] text-gray-500">${item.cat} • <span class="text-amber-400 font-semibold">${item.w}W</span></div>
-          </div>
-          <button onclick="changeQty(${item.id}, 1)" class="bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/30 px-2.5 py-1 rounded-lg font-semibold transition whitespace-nowrap flex items-center gap-1">
-            <i class="fa-solid fa-plus text-[10px]"></i> ${qtyInZone > 0 ? `(${qtyInZone})` : 'Añadir'}
-          </button>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // CALCULATIONS & ALERTS
-    function recalculateZone(zone) {
-      let totalWatts = 0;
-      Object.entries(zone.items).forEach(([equipId, qty]) => {
-        const equip = equipmentCatalog.find(e => e.id == equipId);
-        if (equip) totalWatts += equip.w * qty;
-      });
-
-      const totalAmps = totalWatts / 230;
-      const threshold = zone.safetyThreshold || 2300;
-      const linesNeeded = Math.ceil(totalWatts / threshold) || 1;
-
-      document.getElementById('zone-watts').textContent = `${totalWatts} W`;
-      document.getElementById('zone-amps').textContent = `${totalAmps.toFixed(1)} A`;
-      document.getElementById('zone-lines-needed').textContent = `${linesNeeded} Tirada(s) independ.`;
-
-      // Feed capacity alert
-      const feedInfo = feedCapacities[zone.feed] || feedCapacities["1_schuko"];
-      const alertBox = document.getElementById('zone-status-alert');
-
-      if (totalWatts > feedInfo.maxW) {
-        const excess = totalWatts - feedInfo.maxW;
-        alertBox.className = "p-3.5 rounded-xl border border-red-500/40 bg-red-950/30 text-red-300 text-xs flex items-start gap-2.5";
-        alertBox.innerHTML = `
-          <i class="fa-solid fa-triangle-exclamation text-red-400 text-base mt-0.5"></i>
-          <div>
-            <div class="font-bold">⚠️ EXCESO DE POTENCIA EN ESTA ZONA</div>
-            <div class="mt-0.5 leading-relaxed">
-              El consumo (${totalWatts}W) supera la capacidad máxima de tu toma seleccionada (${feedInfo.name} - ${feedInfo.maxW}W max) por <strong>${excess}W</strong>.
-              <br><span class="text-white underline">Solución:</span> Cambia la toma de esta zona a 2x Schuko o Cetac 32A, o tira más líneas independientes desde el cuadro principal.
-            </div>
-          </div>
-        `;
-      } else if (totalWatts > feedInfo.maxW * 0.85) {
-        alertBox.className = "p-3.5 rounded-xl border border-amber-500/40 bg-amber-950/30 text-amber-300 text-xs flex items-start gap-2.5";
-        alertBox.innerHTML = `
-          <i class="fa-solid fa-circle-exclamation text-amber-400 text-base mt-0.5"></i>
-          <div>
-            <div class="font-bold">⚡ Carga Elevada (>85% de capacidad)</div>
-            <div class="mt-0.5 leading-relaxed">
-              Consumo de ${totalWatts}W sobre ${feedInfo.maxW}W permitidos. Se recomienda mantener al menos 2 mangueras encadenadas bien balanceadas.
-            </div>
-          </div>
-        `;
-      } else {
-        alertBox.className = "p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 text-emerald-300 text-xs flex items-start gap-2.5";
-        alertBox.innerHTML = `
-          <i class="fa-solid fa-circle-check text-emerald-400 text-base mt-0.5"></i>
-          <div>
-            <div class="font-bold">✅ Alimentación de Zona Correcta</div>
-            <div class="mt-0.5 leading-relaxed">
-              La carga de ${totalWatts}W está dentro del margen seguro de la toma ${feedInfo.name} (${feedInfo.maxW}W max).
-            </div>
-          </div>
-        `;
-      }
-    }
-
-    function recalculateAll() {
-      let globalWatts = 0;
-
+    function renderActiveZoneSelect() {
+      const sel = document.getElementById('select-active-zone');
+      sel.innerHTML = '';
       zones.forEach(z => {
-        let zWatts = 0;
-        Object.entries(z.items).forEach(([equipId, qty]) => {
-          const equip = equipmentCatalog.find(e => e.id == equipId);
-          if (equip) zWatts += equip.w * qty;
-        });
-        globalWatts += zWatts;
+        const opt = document.createElement('option');
+        opt.value = z.id;
+        opt.innerText = z.name;
+        if(z.id === activeZoneId) opt.selected = true;
+        sel.appendChild(opt);
       });
-
-      const globalAmps = globalWatts / 230;
-
-      document.getElementById('global-watts-badge').textContent = `${globalWatts} W`;
-      document.getElementById('global-amps-badge').textContent = `${globalAmps.toFixed(1)} A`;
-
-      renderAllZonesGrid();
     }
 
-    function renderAllZonesGrid() {
-      const container = document.getElementById('all-zones-grid');
+    function renderZones() {
+      const container = document.getElementById('zones-container');
       container.innerHTML = '';
 
       zones.forEach(z => {
         let zWatts = 0;
-        let itemsCount = 0;
-        Object.entries(z.items).forEach(([equipId, qty]) => {
-          const equip = equipmentCatalog.find(e => e.id == equipId);
-          if (equip) zWatts += equip.w * qty;
-          itemsCount += qty;
-        });
+        let zItemsCount = 0;
 
-        const feedInfo = feedCapacities[z.feed] || feedCapacities["1_schuko"];
-        const threshold = z.safetyThreshold || 2300;
-        const linesNeeded = Math.ceil(zWatts / threshold) || 1;
-        const isOverloaded = zWatts > feedInfo.maxW;
+        for (const [eIdx, qty] of Object.entries(z.items)) {
+          zWatts += excelEquipments[eIdx].w * qty;
+          zItemsCount += qty;
+        }
 
-        const card = document.createElement('div');
-        card.className = `custom-glass rounded-2xl p-4 border transition cursor-pointer ${z.id === activeZoneId ? 'border-blue-500/80 bg-blue-950/10' : 'border-gray-800'}`;
-        card.onclick = () => {
-          activeZoneId = z.id;
-          renderZoneSelector();
-          renderActiveZoneUI();
-        };
+        const zAmps = zWatts / 230;
+        const zLines = Math.ceil(zWatts / 2300) || 1;
 
-        card.innerHTML = `
-          <div class="flex justify-between items-start gap-2 border-b border-gray-800 pb-2">
-            <div>
-              <h4 class="font-bold text-gray-200 text-sm">${z.name}</h4>
-              <p class="text-[10px] text-gray-400">${feedInfo.name} (${feedInfo.maxW}W max)</p>
-            </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isOverloaded ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
-              ${isOverloaded ? '⚠️ SOBRECARGA' : 'OK'}
-            </span>
+        // Limite por feed de la zona
+        let maxAllowedW = 3680;
+        if(z.feed === '2_schuko') maxAllowedW = 7360;
+        if(z.feed === 'cetac_16_mono') maxAllowedW = 3680;
+        if(z.feed === 'cetac_32_mono') maxAllowedW = 7360;
+        if(z.feed === 'cetac_32_tri') maxAllowedW = 22000;
+
+        const isOverloaded = zWatts > maxAllowedW;
+
+        const box = document.createElement('div');
+        box.className = 'zone-box';
+        box.innerHTML = `
+          <div class="zone-header">
+            <span class="zone-title">${z.name}</span>
+            <button class="btn-small" style="background:#ef4444;" onclick="deleteZone(${z.id})">Borrar Zona</button>
           </div>
 
-          <div class="grid grid-cols-2 gap-2 my-3 text-center">
-            <div class="bg-gray-950/60 p-2 rounded-lg border border-gray-800">
-              <div class="text-[9px] text-gray-500 uppercase">Consumo</div>
-              <div class="text-sm font-bold text-amber-400">${zWatts} W</div>
-            </div>
-            <div class="bg-gray-950/60 p-2 rounded-lg border border-gray-800">
-              <div class="text-[9px] text-gray-500 uppercase">Tiradas Regletas</div>
-              <div class="text-sm font-bold text-purple-400">${linesNeeded} Líneas</div>
-            </div>
+          <div class="input-group" style="margin-bottom:0.6rem;">
+            <label>Acometida Eléctrica en esta Zona:</label>
+            <select onchange="changeZoneFeed(${z.id}, this.value)">
+              <option value="1_schuko" ${z.feed === '1_schuko' ? 'selected' : ''}>1x Schuko Monofásico (16A / 3.680W max)</option>
+              <option value="2_schuko" ${z.feed === '2_schuko' ? 'selected' : ''}>2x Schuko Separados (32A / 7.360W total)</option>
+              <option value="cetac_16_mono" ${z.feed === 'cetac_16_mono' ? 'selected' : ''}>1x Cetac Monofásico 16A (3.680W)</option>
+              <option value="cetac_32_mono" ${z.feed === 'cetac_32_mono' ? 'selected' : ''}>1x Cetac Monofásico 32A (7.360W)</option>
+              <option value="cetac_32_tri" ${z.feed === 'cetac_32_tri' ? 'selected' : ''}>1x Cetac Trifásico 32A (22.000W)</option>
+            </select>
           </div>
 
-          <div class="text-[11px] text-gray-400 flex justify-between items-center">
-            <span>${itemsCount} equipos en zona</span>
-            <span class="text-blue-400 font-semibold hover:underline">Editar →</span>
+          <div class="grid-3">
+            <div style="font-size:0.85rem;"><strong>Equipos:</strong> ${zItemsCount} uds.</div>
+            <div style="font-size:0.85rem;"><strong>Consumo:</strong> ${zWatts} W (${zAmps.toFixed(1)} A)</div>
+            <div style="font-size:0.85rem; color:var(--accent-purple)"><strong>Mangueras:</strong> ${zLines} Regletas (<2.300W)</div>
+          </div>
+
+          <div class="alert-banner ${isOverloaded ? 'alert-danger' : 'alert-success'}">
+            ${isOverloaded 
+              ? `⚠️ <strong>SOBRECARGA EN ESTA ZONA:</strong> Consumo (${zWatts}W) supera el máximo de la toma seleccionada (${maxAllowedW}W).` 
+              : `✅ <strong>Acometida Correcta:</strong> Consumo dentro del margen de seguridad de esta toma.`}
           </div>
         `;
-        container.appendChild(card);
+        container.appendChild(box);
       });
     }
 
-    // LED CALCULATOR
-    function calculateLED() {
-      const w = parseFloat(document.getElementById('led-width').value) || 0;
-      const h = parseFloat(document.getElementById('led-height').value) || 0;
+    function renderEquipList() {
+      const selZoneVal = parseInt(document.getElementById('select-active-zone').value);
+      if(selZoneVal) activeZoneId = selZoneVal;
+
+      const currentZone = zones.find(z => z.id === activeZoneId);
+      const query = document.getElementById('search-equip').value.toLowerCase();
+      const container = document.getElementById('equip-container');
+      container.innerHTML = '';
+
+      excelEquipments.forEach((item, idx) => {
+        if(item.name.toLowerCase().includes(query) || item.cat.toLowerCase().includes(query)) {
+          const qty = currentZone.items[idx] || 0;
+          const div = document.createElement('div');
+          div.className = 'equip-item';
+          div.innerHTML = `
+            <div class="equip-info">
+              <div class="equip-name">${item.name}</div>
+              <div class="equip-cat">${item.cat}</div>
+              <div class="equip-power">${item.w} W / ${(item.w / 230).toFixed(2)} A</div>
+            </div>
+            <div class="counter-controls">
+              <button class="btn-qty" onclick="updateQty(${idx}, -1)">-</button>
+              <span class="qty-display">${qty}</span>
+              <button class="btn-qty" onclick="updateQty(${idx}, 1)">+</button>
+            </div>
+          `;
+          container.appendChild(div);
+        }
+      });
+    }
+
+    function updateQty(equipIdx, change) {
+      const currentZone = zones.find(z => z.id === activeZoneId);
+      const currQty = currentZone.items[equipIdx] || 0;
+      const newQty = Math.max(0, currQty + change);
+
+      if(newQty === 0) delete currentZone.items[equipIdx];
+      else currentZone.items[equipIdx] = newQty;
+
+      renderEquipList();
+      renderZones();
+      recalcProject();
+    }
+
+    function recalcProject() {
+      let totalW = 0;
+      let totalLines = 0;
+
+      zones.forEach(z => {
+        let zW = 0;
+        for (const [idx, qty] of Object.entries(z.items)) {
+          zW += excelEquipments[idx].w * qty;
+        }
+        totalW += zW;
+        totalLines += Math.ceil(zW / 2300);
+      });
+
+      const totalA = totalW / 230;
+      document.getElementById('total-watts').innerText = `${totalW} W`;
+      document.getElementById('total-amps').innerText = `${totalA.toFixed(1)} A`;
+      document.getElementById('total-lines').innerText = `${totalLines} Líneas`;
+    }
+
+    // CALCULADORA LED
+    function calcLED() {
+      const w = parseFloat(document.getElementById('led-w').value) || 0;
+      const h = parseFloat(document.getElementById('led-h').value) || 0;
       const cabType = document.getElementById('led-cab-size').value;
       const pitch = parseFloat(document.getElementById('led-pitch').value);
 
       const cabW = cabType === '100x50' ? 1.0 : 0.5;
       const cabH = 0.5;
 
-      const cols = Math.ceil(w / cabW);
-      const rows = Math.ceil(h / cabH);
-      const totalCabs = cols * rows;
+      const numCols = Math.ceil(w / cabW);
+      const numRows = Math.ceil(h / cabH);
+      const totalCabs = numCols * numRows;
 
-      const pxCabW = Math.round((cabW * 1000) / pitch);
-      const pxCabH = Math.round((cabH * 1000) / pitch);
+      const pxPerCabW = Math.round((cabW * 1000) / pitch);
+      const pxPerCabH = Math.round((cabH * 1000) / pitch);
 
-      const resW = cols * pxCabW;
-      const resH = rows * pxCabH;
-      const totalPx = resW * resH;
+      const resW = numCols * pxPerCabW;
+      const resH = numRows * pxPerCabH;
+      const totalPixels = resW * resH;
 
-      document.getElementById('led-res-val').textContent = `${resW} x ${resH} px`;
-      document.getElementById('led-cabs-val').textContent = `${totalCabs} Cabs (${cols}x${rows})`;
+      document.getElementById('led-res').innerText = `${resW} x ${resH} px`;
+      document.getElementById('led-cabinets').innerText = `${totalCabs} cabs (${numCols}x${numRows})`;
 
-      // Aspect ratio helper
       const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-      const divisor = gcd(resW, resH) || 1;
-      document.getElementById('led-ratio-val').textContent = `${Math.round(resW/divisor)}:${Math.round(resH/divisor)}`;
+      const div = gcd(resW, resH);
+      document.getElementById('led-ratio').innerText = `${Math.round(resW/div)}:${Math.round(resH/div)}`;
 
-      const wattsPerCab = cabType === '100x50' ? 240 : 120;
-      const totalWatts = totalCabs * wattsPerCab;
-      const totalAmps = totalWatts / 230;
+      const maxW = totalCabs * (cabType === '100x50' ? 240 : 120);
+      document.getElementById('led-max-w').innerText = `${maxW} W / ${(maxW/230).toFixed(1)} A`;
 
-      document.getElementById('led-power-val').textContent = `${totalWatts} W / ${totalAmps.toFixed(1)} A`;
-
-      // Novastar Gigabit ports needed (approx 650.000 px max per port @60Hz 8bit)
-      const ports = Math.ceil(totalPx / 650000) || 1;
-      document.getElementById('led-ports-val').textContent = `${ports} Puerto(s) Novastar`;
+      const portsNeeded = Math.ceil(totalPixels / 650000);
+      document.getElementById('led-ports').innerText = `${portsNeeded} Puerto(s) Novastar`;
     }
 
-    // PROJECTION CALCULATOR
-    function calculateProjection() {
+    // CALCULADORA PROYECCIÓN
+    function calcProj() {
       const screenW = parseFloat(document.getElementById('proj-screen-w').value) || 1;
-      const dist = parseFloat(document.getElementById('proj-distance').value) || 0;
-      const ratio = dist / screenW;
-      document.getElementById('proj-res-ratio').textContent = `${ratio.toFixed(2)} : 1`;
+      const dist = parseFloat(document.getElementById('proj-dist').value) || 0;
+      const ratioNeeded = dist / screenW;
+      document.getElementById('res-lens-needed').innerText = `${ratioNeeded.toFixed(2)} : 1`;
     }
 
-    function calculateProjectionByLens() {
+    function calcProjByLens() {
       const screenW = parseFloat(document.getElementById('proj-screen-w').value) || 1;
       const lens = parseFloat(document.getElementById('proj-lens-ratio').value) || 0;
-      const dist = screenW * lens;
-      document.getElementById('proj-res-dist').textContent = `${dist.toFixed(2)} m`;
+      const distNeeded = screenW * lens;
+      document.getElementById('res-dist-needed').innerText = `${distNeeded.toFixed(2)} m`;
     }
 
-    // SUMMARY PRINT REPORT GENERATOR
-    function renderSummaryReport() {
-      const container = document.getElementById('summary-report-content');
-      let globalWatts = 0;
-      let globalEquipsCount = 0;
-
-      let zonesHTML = '';
+    // RESUMEN DEL BOLO
+    function renderSummary() {
+      const container = document.getElementById('summary-content');
+      let html = `<h3 style="color:var(--text-main); margin-bottom:12px;">Desglose Técnico de Zonas y Alimentación</h3>`;
+      let globalEquips = 0;
 
       zones.forEach(z => {
-        let zWatts = 0;
-        let itemsListHTML = '';
-        const entries = Object.entries(z.items);
+        let zW = 0;
+        let zItemsHTML = '<ul>';
+        let countInZone = 0;
 
-        entries.forEach(([equipId, qty]) => {
-          const equip = equipmentCatalog.find(e => e.id == equipId);
-          if (equip) {
-            const itemW = equip.w * qty;
-            zWatts += itemW;
-            globalEquipsCount += qty;
-            itemsListHTML += `<li class="text-xs py-0.5">• <strong>${qty}x</strong> ${equip.name} (${itemW}W)</li>`;
-          }
-        });
+        for (const [idx, qty] of Object.entries(z.items)) {
+          const item = excelEquipments[idx];
+          zW += item.w * qty;
+          zItemsHTML += `<li><strong>${qty}x</strong> ${item.name} (${item.w * qty} W)</li>`;
+          countInZone += qty;
+          globalEquips += qty;
+        }
+        zItemsHTML += '</ul>';
 
-        globalWatts += zWatts;
-        const feedInfo = feedCapacities[z.feed] || feedCapacities["1_schuko"];
-        const threshold = z.safetyThreshold || 2300;
-        const linesNeeded = Math.ceil(zWatts / threshold) || 1;
+        const lines = Math.ceil(zW / 2300) || 1;
 
-        zonesHTML += `
-          <div class="border border-gray-700/80 rounded-xl p-4 bg-gray-950/60 space-y-2">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-              <h3 class="font-bold text-base text-blue-400">${z.name}</h3>
-              <span class="text-xs font-semibold px-2.5 py-1 bg-gray-900 rounded text-gray-300 border border-gray-800">
-                Toma: ${feedInfo.name}
-              </span>
-            </div>
-            
-            <div class="grid grid-cols-3 gap-2 text-xs py-1">
-              <div>Consumo: <strong class="text-amber-400">${zWatts} W</strong></div>
-              <div>Amperaje: <strong class="text-blue-400">${(zWatts/230).toFixed(1)} A</strong></div>
-              <div>Tiradas Regletas: <strong class="text-purple-400">${linesNeeded} Manguera(s)</strong></div>
-            </div>
-
-            <div class="pt-2 border-t border-gray-800/60">
-              <div class="text-[11px] font-bold text-gray-400 uppercase mb-1">Equipos en esta zona:</div>
-              <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-4 text-gray-300">
-                ${itemsListHTML || '<li class="text-xs text-gray-500 italic">Sin equipos</li>'}
-              </ul>
-            </div>
+        html += `
+          <div style="background:#131d2e; padding:10px; border-radius:6px; margin-bottom:10px; border:1px solid var(--card-border);">
+            <h4 style="color:var(--accent-green);">${z.name}</h4>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">
+              Consumo: <strong>${zW} W (${(zW/230).toFixed(1)} A)</strong> | Mangueras independientes recomendadas: <strong style="color:var(--accent-purple)">${lines} Línea(s) (<2.300W)</strong>
+            </p>
+            ${countInZone > 0 ? zItemsHTML : '<p style="font-size:0.8rem; font-style:italic;">Sin equipos asignados.</p>'}
           </div>
         `;
       });
 
-      const globalAmps = globalWatts / 230;
+      if(globalEquips === 0) {
+        container.innerHTML = `<p>No has añadido equipos a ninguna zona del evento.</p>`;
+        return;
+      }
 
-      container.innerHTML = `
-        <div class="space-y-4">
-          <div class="border-b border-gray-800 pb-4">
-            <h2 class="text-2xl font-bold text-white">INFORME TÉCNICO DE ENERGÍA Y DISTRIBUCIÓN AV</h2>
-            <p class="text-xs text-gray-400">Generado por AV Engine Pro • Resumen para Producción y Eléctrico del Evento</p>
-          </div>
+      html += `<br><hr style="border-color:var(--card-border);"><br>`;
+      html += `<p><strong>Potencia Total del Evento:</strong> ${document.getElementById('total-watts').innerText}</p>`;
+      html += `<p><strong>Amperaje Global (230V):</strong> ${document.getElementById('total-amps').innerText}</p>`;
 
-          <!-- GLOBAL METRICS METERS -->
-          <div class="grid grid-cols-3 gap-4 bg-blue-950/30 border border-blue-500/30 p-4 rounded-xl text-center">
-            <div>
-              <div class="text-xs text-gray-400 font-medium">Consumo Total Bolo</div>
-              <div class="text-xl font-bold text-amber-400 mt-0.5">${globalWatts} W</div>
-            </div>
-            <div>
-              <div class="text-xs text-gray-400 font-medium">Amperaje Total (230V)</div>
-              <div class="text-xl font-bold text-blue-400 mt-0.5">${globalAmps.toFixed(1)} A</div>
-            </div>
-            <div>
-              <div class="text-xs text-gray-400 font-medium">Equipos Registrados</div>
-              <div class="text-xl font-bold text-emerald-400 mt-0.5">${globalEquipsCount} Unidades</div>
-            </div>
-          </div>
-
-          <div class="space-y-3">
-            <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider">Desglose Detallado por Zonas</h3>
-            ${zonesHTML}
-          </div>
-        </div>
-      `;
+      container.innerHTML = html;
     }
 
-    // INITIALIZATION ON LOAD
-    window.onload = function() {
-      renderZoneSelector();
-      renderActiveZoneUI();
-      recalculateAll();
-      calculateLED();
-      calculateProjection();
-    };
+    // INICIALIZAR
+    renderActiveZoneSelect();
+    renderZones();
+    renderEquipList();
+    calcLED();
+    calcProj();
+    recalcProject();
   </script>
 </body>
 </html>
